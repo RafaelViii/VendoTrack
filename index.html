@@ -922,6 +922,135 @@ body{
   font-size:13px;
 }
 
+/* ── MODEL INVENTORY CARDS GRID ── */
+.cat-models-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+  padding:14px;
+}
+.model-inv-card{
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:12px;
+  transition:border-color .2s;
+}
+.model-inv-card:hover{border-color:var(--border-md)}
+
+.model-inv-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:6px;
+}
+.model-inv-name{
+  font-family:var(--font-display);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-1);
+  line-height:1.3;
+  flex:1;
+}
+.model-inv-actions{display:flex;gap:4px;flex-shrink:0}
+
+.model-inv-body{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.model-gauge-wrap{
+  position:relative;
+  width:60px;height:60px;
+  flex-shrink:0;
+}
+.model-gauge-center{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.model-gauge-pct{
+  font-family:var(--font-mono);
+  font-size:11px;
+  font-weight:500;
+  color:var(--text-1);
+}
+.model-inv-info{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+.model-inv-stat{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:4px;
+}
+.model-inv-stat-label{
+  font-size:10.5px;
+  color:var(--text-3);
+  font-family:var(--font-mono);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  white-space:nowrap;
+}
+.model-inv-stat-val{
+  font-size:11.5px;
+  color:var(--text-1);
+  font-family:var(--font-mono);
+  font-weight:500;
+}
+.model-stock-bar-wrap{
+  width:100%;height:3px;
+  background:var(--border-md);
+  border-radius:2px;
+  overflow:hidden;
+  margin:1px 0;
+}
+.model-stock-bar{
+  height:100%;
+  border-radius:2px;
+  transition:width .4s ease;
+}
+.sensor-badge{
+  font-size:10.5px;
+  font-family:var(--font-mono);
+  font-weight:500;
+  padding:2px 7px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+.sensor-badge.connected{
+  background:var(--success-bg);
+  color:var(--success);
+}
+.sensor-badge.disconnected{
+  background:var(--bg-hover);
+  color:var(--text-3);
+  border:1px solid var(--border-md);
+}
+.model-status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.model-inv-btns{display:flex;gap:5px;flex-wrap:wrap}
+
+@media(max-width:680px){
+  .cat-models-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:400px){
+  .cat-models-grid{grid-template-columns:1fr}
+}
+
 .gauge-track{stroke:#e2e8f0}
 html.dark .gauge-track{stroke:#1e2a42}
 
@@ -938,6 +1067,27 @@ html.dark .gauge-track{stroke:#1e2a42}
   flex-shrink:0;
 }
 .theme-toggle:hover{background:var(--bg-hover);color:var(--text-1)}
+
+/* ── DASHBOARD CATEGORY CARD MODEL BREAKDOWN ── */
+.dash-model-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.dash-model-row{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;
+  background:var(--bg-elevated);
+  border:1px solid var(--border);
+  border-radius:7px;
+}
+.dash-model-name{flex:1;font-size:12px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dash-model-bar-wrap{width:56px;height:4px;background:var(--border-md);border-radius:2px;overflow:hidden;flex-shrink:0}
+.dash-model-bar{height:100%;border-radius:2px;transition:width .4s}
+.dash-model-count{font-family:var(--font-mono);font-size:11px;color:var(--text-1);font-weight:500;white-space:nowrap;flex-shrink:0;min-width:38px;text-align:right}
+.dash-model-badge{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500;flex-shrink:0}
+.dash-model-badge.ok{background:var(--success-bg);color:var(--success)}
+.dash-model-badge.low{background:var(--warning-bg);color:var(--warning)}
+.dash-model-badge.critical{background:var(--danger-bg);color:var(--danger)}
+.dash-model-sensor{font-size:10px;color:var(--success);flex-shrink:0}
+.dash-model-sensor.off{color:var(--text-3)}
+
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
@@ -1093,139 +1243,11 @@ html.dark .gauge-track{stroke:#1e2a42}
     <div>
       <div class="section-header">
         <div class="section-title">Inventory Status</div>
-        <div class="section-hint">Live stock levels</div>
+        <div class="section-hint">Live stock levels · accumulated per category</div>
       </div>
       <div style="height:10px"></div>
-      <div class="products-grid">
-
-        <!-- BALLPEN -->
-        <div class="product-card">
-          <div class="product-header">
-            <div class="product-identity">
-              <div class="product-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-              </div>
-              <div>
-                <div class="product-name">Ballpen</div>
-                <div class="product-sku">SKU-001 · ₱<span id="bp-price">5.00</span> / pc</div>
-              </div>
-            </div>
-            <div class="stock-status" id="bp-status-badge">OK</div>
-          </div>
-
-          <div class="gauge-row">
-            <div class="gauge-wrap">
-              <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="44" fill="none" class="gauge-track" stroke-width="10"/>
-                <circle cx="55" cy="55" r="44" fill="none" id="bp-gauge-ring"
-                  stroke="#3b82f6" stroke-width="10"
-                  stroke-dasharray="276.5" stroke-dashoffset="276.5"
-                  stroke-linecap="round"/>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="bp-gauge-pct">0%</div>
-                <div class="gauge-sub">Stock</div>
-              </div>
-            </div>
-            <div class="stock-info">
-              <div class="stock-row">
-                <span class="stock-row-label">Current Stock</span>
-                <span class="stock-row-val" id="bp-current">0 pcs</span>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Max Capacity</span>
-                <span class="stock-row-val" id="bp-max">0 pcs</span>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Low Stock Threshold</span>
-                <span class="stock-row-val" id="bp-threshold">0 pcs</span>
-              </div>
-              <div class="stock-bar-wrap">
-                <div class="stock-bar" id="bp-bar" style="width:0%;background:var(--accent)"></div>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Sold Today</span>
-                <span class="stock-row-val" id="bp-sold-today" style="color:var(--success)">0 pcs</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-actions">
-            <button class="btn-sm btn-primary" onclick="openRestockModal('ballpen')">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Restock
-            </button>
-            <button class="btn-sm btn-outline" onclick="openStockSetModal('ballpen')">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-              Configure
-            </button>
-          </div>
-        </div>
-
-        <!-- BOND PAPER -->
-        <div class="product-card">
-          <div class="product-header">
-            <div class="product-identity">
-              <div class="product-icon" style="color:var(--cyan)">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              </div>
-              <div>
-                <div class="product-name">Bond Paper</div>
-                <div class="product-sku">SKU-002 · ₱<span id="pp-price">2.00</span> / sheet</div>
-              </div>
-            </div>
-            <div class="stock-status" id="pp-status-badge">OK</div>
-          </div>
-
-          <div class="gauge-row">
-            <div class="gauge-wrap">
-              <svg width="110" height="110" viewBox="0 0 110 110">
-                <circle cx="55" cy="55" r="44" fill="none" class="gauge-track" stroke-width="10"/>
-                <circle cx="55" cy="55" r="44" fill="none" id="pp-gauge-ring"
-                  stroke="#22d3ee" stroke-width="10"
-                  stroke-dasharray="276.5" stroke-dashoffset="276.5"
-                  stroke-linecap="round"/>
-              </svg>
-              <div class="gauge-center">
-                <div class="gauge-pct" id="pp-gauge-pct">0%</div>
-                <div class="gauge-sub">Stock</div>
-              </div>
-            </div>
-            <div class="stock-info">
-              <div class="stock-row">
-                <span class="stock-row-label">Current Stock</span>
-                <span class="stock-row-val" id="pp-current">0 sheets</span>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Max Capacity</span>
-                <span class="stock-row-val" id="pp-max">0 sheets</span>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Low Stock Threshold</span>
-                <span class="stock-row-val" id="pp-threshold">0 sheets</span>
-              </div>
-              <div class="stock-bar-wrap">
-                <div class="stock-bar" id="pp-bar" style="width:0%;background:var(--cyan)"></div>
-              </div>
-              <div class="stock-row">
-                <span class="stock-row-label">Sold Today</span>
-                <span class="stock-row-val" id="pp-sold-today" style="color:var(--success)">0 sheets</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="product-actions">
-            <button class="btn-sm btn-primary" onclick="openRestockModal('paper')" style="background:var(--cyan-dim);border-color:var(--cyan-dim)">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Restock
-            </button>
-            <button class="btn-sm btn-outline" onclick="openStockSetModal('paper')">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-              Configure
-            </button>
-          </div>
-        </div>
-
+      <div class="products-grid" id="dashboard-products-grid">
+        <!-- Rendered dynamically from categories -->
       </div>
     </div>
 
@@ -1440,6 +1462,61 @@ html.dark .gauge-track{stroke:#1e2a42}
   </div>
 </div>
 
+<!-- MODEL RESTOCK MODAL -->
+<div class="modal-overlay" id="model-restock-modal">
+  <div class="modal">
+    <div class="modal-title" id="mr-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Restock Model
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--text-2)">Current: <span id="mr-current" style="color:var(--text-1);font-family:var(--font-mono)">0</span> &nbsp;·&nbsp; Max: <span id="mr-max" style="color:var(--text-1);font-family:var(--font-mono)">0</span></div>
+      <div class="modal-field">
+        <label>Quantity to add</label>
+        <input type="number" id="mr-qty" min="1" placeholder="Enter quantity" oninput="(function(){const cat=categories.find(c=>c.id===_activeModelCatId);const m=cat&&cat.models.find(m=>m.id===_activeModelId);if(!m)return;const add=parseInt(document.getElementById('mr-qty').value)||0;document.getElementById('mr-new-total').textContent=Math.min(m.stock+add,m.max)+' / '+m.max;})()"/>
+      </div>
+      <div style="font-size:12px;color:var(--text-3)">New total: <span id="mr-new-total" style="color:var(--success);font-family:var(--font-mono)">—</span></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal('model-restock-modal')">Cancel</button>
+      <button class="btn-modal-save" onclick="confirmModelRestock()">Confirm Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODEL CONFIG MODAL -->
+<div class="modal-overlay" id="model-config-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title" id="mc-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Configure Model
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <label>Current Stock (manual sync)</label>
+        <input type="number" id="mc-stock" min="0" placeholder="Current count"/>
+      </div>
+      <div class="modal-field">
+        <label>Max Capacity</label>
+        <input type="number" id="mc-max" min="1" placeholder="Max slots"/>
+      </div>
+      <div class="modal-field">
+        <label>Low Stock Threshold</label>
+        <input type="number" id="mc-threshold" min="1" placeholder="Alert below this"/>
+      </div>
+      <div class="modal-field" style="flex-direction:row;align-items:center;gap:10px">
+        <input type="checkbox" id="mc-sensor" style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <label for="mc-sensor" style="font-size:13px;cursor:pointer">Sensor connected (ESP32 live feed)</label>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-3)">Mark as connected when you wire up the sensor for this slot.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal('model-config-modal')">Cancel</button>
+      <button class="btn-modal-save" onclick="confirmModelConfig()">Save Config</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
@@ -1531,44 +1608,99 @@ setInterval(updateClock, 1000);
 updateClock();
 
 // ═══════════════════════════════════════════════════════
-// RENDER PRODUCTS
+// RENDER DASHBOARD PRODUCTS (from categories)
 // ═══════════════════════════════════════════════════════
-function renderProduct(key) {
-  const p = state[key];
-  const pct = Math.min(100, Math.round((p.stock / p.max) * 100));
-  const circumference = 276.5;
-  const offset = circumference - (circumference * pct / 100);
-  const isLow = p.stock <= p.threshold;
-  const isCritical = p.stock <= Math.floor(p.threshold / 2);
+const CAT_COLORS = ['#3b82f6','#22d3ee','#a78bfa','#f472b6','#34d399','#fb923c'];
 
-  const prefix = key === 'ballpen' ? 'bp' : 'pp';
-
-  const ring = document.getElementById(`${prefix}-gauge-ring`);
-  ring.style.strokeDashoffset = offset;
-  ring.style.stroke = isCritical ? '#ef4444' : isLow ? '#f59e0b' : (key === 'ballpen' ? '#3b82f6' : '#22d3ee');
-
-  document.getElementById(`${prefix}-gauge-pct`).textContent = pct + '%';
-  document.getElementById(`${prefix}-current`).textContent = p.stock + ' ' + p.unit;
-  document.getElementById(`${prefix}-max`).textContent = p.max + ' ' + p.unit;
-  document.getElementById(`${prefix}-threshold`).textContent = p.threshold + ' ' + p.unit;
-  document.getElementById(`${prefix}-sold-today`).textContent = p.soldToday + ' ' + p.unit;
-  document.getElementById(`${prefix}-price`).textContent = p.price.toFixed(2);
-
-  const bar = document.getElementById(`${prefix}-bar`);
-  bar.style.width = pct + '%';
-  bar.style.background = isCritical ? '#ef4444' : isLow ? '#f59e0b' : p.color;
-
-  const badge = document.getElementById(`${prefix}-status-badge`);
-  if (isCritical) {
-    badge.className = 'stock-status critical';
-    badge.textContent = 'CRITICAL';
-  } else if (isLow) {
-    badge.className = 'stock-status low';
-    badge.textContent = 'LOW';
-  } else {
-    badge.className = 'stock-status ok';
-    badge.textContent = 'OK';
+function renderDashboardProducts() {
+  const grid = document.getElementById('dashboard-products-grid');
+  if (!grid) return;
+  if (!categories.length) {
+    grid.innerHTML = '<div style="color:var(--text-3);font-size:13px;padding:20px;text-align:center">No categories yet. Go to <b>Categories</b> to add some.</div>';
+    return;
   }
+
+  grid.innerHTML = categories.map((cat, ci) => {
+    const color = CAT_COLORS[ci % CAT_COLORS.length];
+    const totalStock = cat.models.reduce((s, m) => s + m.stock, 0);
+    const totalMax   = cat.models.reduce((s, m) => s + m.max,   0);
+    const pct = totalMax > 0 ? Math.round((totalStock / totalMax) * 100) : 0;
+    const circumference = 276.5;
+    const offset = circumference - (circumference * pct / 100);
+
+    // Overall status: worst model status wins
+    let overallCls = 'ok';
+    cat.models.forEach(m => {
+      const s = modelStockStatus(m).cls;
+      if (s === 'critical') overallCls = 'critical';
+      else if (s === 'low' && overallCls !== 'critical') overallCls = 'low';
+    });
+    const overallLabel = overallCls === 'critical' ? 'CRITICAL' : overallCls === 'low' ? 'LOW' : 'OK';
+    const ringColor = overallCls === 'critical' ? '#ef4444' : overallCls === 'low' ? '#f59e0b' : color;
+
+    const modelRows = cat.models.length ? cat.models.map(m => {
+      const st = modelStockStatus(m);
+      const mpct = m.max > 0 ? Math.round((m.stock / m.max) * 100) : 0;
+      const mColor = st.cls === 'critical' ? '#ef4444' : st.cls === 'low' ? '#f59e0b' : color;
+      return `
+        <div class="dash-model-row">
+          <span class="dash-model-name">${escHtml(m.name)}</span>
+          <div class="dash-model-bar-wrap"><div class="dash-model-bar" style="width:${mpct}%;background:${mColor}"></div></div>
+          <span class="dash-model-count">${m.stock}/${m.max}</span>
+          <span class="dash-model-badge ${st.cls}">${st.label}</span>
+          <span class="dash-model-sensor ${m.sensorConnected ? '' : 'off'}" title="${m.sensorConnected ? 'Sensor live' : 'No sensor'}">${m.sensorConnected ? '●' : '○'}</span>
+        </div>`;
+    }).join('') : `<div style="font-size:12px;color:var(--text-3);padding:4px 0">No models yet.</div>`;
+
+    return `
+      <div class="product-card">
+        <div class="product-header">
+          <div class="product-identity">
+            <div class="product-icon" style="color:${color}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+            </div>
+            <div>
+              <div class="product-name">${escHtml(cat.name)}</div>
+              <div class="product-sku">${cat.models.length} model${cat.models.length !== 1 ? 's' : ''} · ${totalStock} / ${totalMax} pcs total</div>
+            </div>
+          </div>
+          <div class="stock-status ${overallCls}">${overallLabel}</div>
+        </div>
+
+        <div class="gauge-row">
+          <div class="gauge-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="44" fill="none" class="gauge-track" stroke-width="10"/>
+              <circle cx="55" cy="55" r="44" fill="none"
+                stroke="${ringColor}" stroke-width="10"
+                stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+                stroke-linecap="round" style="transition:stroke-dashoffset .5s ease"/>
+            </svg>
+            <div class="gauge-center">
+              <div class="gauge-pct" style="color:${ringColor}">${pct}%</div>
+              <div class="gauge-sub">Total</div>
+            </div>
+          </div>
+          <div class="stock-info" style="flex:1;min-width:0">
+            <div class="stock-row">
+              <span class="stock-row-label">Total Stock</span>
+              <span class="stock-row-val">${totalStock} / ${totalMax} pcs</span>
+            </div>
+            <div class="stock-bar-wrap">
+              <div class="stock-bar" style="width:${pct}%;background:${ringColor}"></div>
+            </div>
+            <div class="dash-model-list">${modelRows}</div>
+          </div>
+        </div>
+
+        <div class="product-actions">
+          <button class="btn-sm btn-primary" style="background:${color};border-color:${color}" onclick="setPage('categories')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Restock Models
+          </button>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1591,8 +1723,20 @@ function renderMetrics() {
 
   let alerts = 0;
   const messages = [];
-  if (state.ballpen.stock <= state.ballpen.threshold) { alerts++; messages.push('Ballpen low'); }
-  if (state.paper.stock <= state.paper.threshold) { alerts++; messages.push('Bond Paper low'); }
+  categories.forEach(cat => {
+    cat.models.forEach(m => {
+      const st = modelStockStatus(m);
+      if (st.cls === 'critical' || st.cls === 'low') {
+        alerts++;
+        messages.push(`${cat.name} › ${m.name} (${st.label})`);
+      }
+    });
+  });
+  // fallback to old state if categories empty
+  if (!categories.length) {
+    if (state.ballpen.stock <= state.ballpen.threshold) { alerts++; messages.push('Ballpen low'); }
+    if (state.paper.stock <= state.paper.threshold) { alerts++; messages.push('Bond Paper low'); }
+  }
   document.getElementById('m-alerts').textContent = alerts;
   document.getElementById('m-alert-sub').textContent = alerts > 0 ? messages.join(', ') : 'All stocks normal';
   const alertIcon = document.getElementById('m-alert-icon');
@@ -1821,14 +1965,15 @@ function loadSettingsToForm() {
 // STOCK ALERT CHECKER
 // ═══════════════════════════════════════════════════════
 function checkStockAlerts() {
-  ['ballpen','paper'].forEach(key => {
-    const p = state[key];
-    const critLevel = Math.floor(p.threshold / 2);
-    if (p.stock <= critLevel) {
-      addNotification('danger', `CRITICAL: ${p.name} is at ${p.stock} ${p.unit}! Restock immediately.`);
-    } else if (p.stock <= p.threshold) {
-      addNotification('warn', `Low stock: ${p.name} is at ${p.stock} ${p.unit} (threshold: ${p.threshold})`);
-    }
+  categories.forEach(cat => {
+    cat.models.forEach(m => {
+      const st = modelStockStatus(m);
+      if (st.cls === 'critical') {
+        addNotification('danger', `CRITICAL: ${cat.name} › ${m.name} is at ${m.stock} pcs! Restock immediately.`);
+      } else if (st.cls === 'low') {
+        addNotification('warn', `Low stock: ${cat.name} › ${m.name} is at ${m.stock} pcs (threshold: ${m.threshold})`);
+      }
+    });
   });
 }
 
@@ -2071,8 +2216,7 @@ function startDemoMode() {
 function init() {
   seedDemoData();
   loadSettingsToForm();
-  renderProduct('ballpen');
-  renderProduct('paper');
+  renderDashboardProducts();
   renderMetrics();
   renderTransactions();
   initCharts();
@@ -2082,20 +2226,45 @@ function init() {
 }
 
 // ═══════════════════════════════════════════════════════
-// CATEGORIES & MODELS
+// CATEGORIES & MODELS  (each model has its own inventory)
 // ═══════════════════════════════════════════════════════
+function makeModel(name, stock, max, threshold) {
+  return { id: 'mdl-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), name, stock: stock||0, max: max||20, threshold: threshold||5, sensorConnected: false };
+}
+
 let categories = [
   {
-    id: 'cat-1',
-    name: 'Ballpen',
-    models: ['Standard Black', 'Standard Blue', 'Standard Red']
+    id: 'cat-1', name: 'Ballpen',
+    models: [
+      { id:'mdl-101', name:'Standard Black',  stock:14, max:20, threshold:5,  sensorConnected:false },
+      { id:'mdl-102', name:'Standard Blue',   stock:3,  max:20, threshold:5,  sensorConnected:false },
+      { id:'mdl-103', name:'Standard Red',    stock:20, max:20, threshold:5,  sensorConnected:false }
+    ]
   },
   {
-    id: 'cat-2',
-    name: 'Bond Paper',
-    models: ['Short (8.5×11)', 'Long (8.5×13)']
+    id: 'cat-2', name: 'Bond Paper',
+    models: [
+      { id:'mdl-201', name:'Short (8.5×11)',  stock:8,  max:50, threshold:10, sensorConnected:false },
+      { id:'mdl-202', name:'Long (8.5×13)',   stock:0,  max:50, threshold:10, sensorConnected:false }
+    ]
   }
 ];
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function modelStockStatus(m) {
+  const crit = Math.floor(m.threshold / 2);
+  if (m.stock === 0)         return { label:'Empty',    cls:'critical' };
+  if (m.stock <= crit)       return { label:'Critical', cls:'critical' };
+  if (m.stock <= m.threshold)return { label:'Low',      cls:'low' };
+  return                            { label:'OK',       cls:'ok' };
+}
+
+function stockBarColor(cls) {
+  return cls === 'ok' ? 'var(--accent)' : cls === 'low' ? 'var(--warning)' : 'var(--danger)';
+}
 
 function renderCategories() {
   const list = document.getElementById('cat-list');
@@ -2110,32 +2279,83 @@ function renderCategories() {
         <div class="cat-group-name" id="cat-name-disp-${cat.id}">${escHtml(cat.name)}</div>
         <span class="cat-count">${cat.models.length} model${cat.models.length !== 1 ? 's' : ''}</span>
         <div class="cat-header-btns">
-          <button class="btn-cat-sm" onclick="startEditCategory('${cat.id}')">Edit</button>
+          <button class="btn-cat-sm" onclick="startEditCategory('${cat.id}')">Rename</button>
           <button class="btn-cat-sm danger" onclick="deleteCategory('${cat.id}')">Delete</button>
         </div>
       </div>
-      <div class="cat-models">
-        ${cat.models.length ? cat.models.map((m, idx) => `
-          <div class="cat-model-row" id="mrow-${cat.id}-${idx}">
-            <div class="model-dot"></div>
-            <div class="model-name" id="mname-disp-${cat.id}-${idx}">${escHtml(m)}</div>
-            <button class="btn-model-sm" onclick="startEditModel('${cat.id}',${idx})">Edit</button>
-            <button class="btn-model-sm danger" onclick="deleteModel('${cat.id}',${idx})">Remove</button>
-          </div>
-        `).join('') : '<div style="font-size:12.5px;color:var(--text-3);padding:4px 0 4px 2px">No models yet.</div>'}
+
+      <div class="cat-models-grid">
+        ${cat.models.length ? cat.models.map(m => {
+          const st = modelStockStatus(m);
+          const pct = m.max > 0 ? Math.round((m.stock / m.max) * 100) : 0;
+          const barColor = stockBarColor(st.cls);
+          const circumference = 138; // r=22 => 2π×22≈138.2
+          const offset = circumference - (circumference * pct / 100);
+          return `
+          <div class="model-inv-card" id="mcard-${m.id}">
+            <div class="model-inv-header">
+              <div class="model-inv-name" id="mname-disp-${m.id}">${escHtml(m.name)}</div>
+              <div class="model-inv-actions">
+                <button class="btn-model-sm" onclick="startEditModel('${cat.id}','${m.id}')">✎</button>
+                <button class="btn-model-sm danger" onclick="deleteModel('${cat.id}','${m.id}')">✕</button>
+              </div>
+            </div>
+
+            <div class="model-inv-body">
+              <!-- Mini gauge -->
+              <div class="model-gauge-wrap">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="22" fill="none" class="gauge-track" stroke-width="6"/>
+                  <circle cx="30" cy="30" r="22" fill="none"
+                    stroke="${barColor}" stroke-width="6"
+                    stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+                    stroke-linecap="round" transform="rotate(-90 30 30)"/>
+                </svg>
+                <div class="model-gauge-center">
+                  <span class="model-gauge-pct">${pct}%</span>
+                </div>
+              </div>
+
+              <!-- Stock info -->
+              <div class="model-inv-info">
+                <div class="model-inv-stat">
+                  <span class="model-inv-stat-label">Stock</span>
+                  <span class="model-inv-stat-val">${m.stock} / ${m.max}</span>
+                </div>
+                <div class="model-stock-bar-wrap">
+                  <div class="model-stock-bar" style="width:${pct}%;background:${barColor}"></div>
+                </div>
+                <div class="model-inv-stat">
+                  <span class="model-inv-stat-label">Threshold</span>
+                  <span class="model-inv-stat-val">${m.threshold}</span>
+                </div>
+                <div class="model-inv-stat">
+                  <span class="model-inv-stat-label">Sensor</span>
+                  <span class="sensor-badge ${m.sensorConnected ? 'connected' : 'disconnected'}">${m.sensorConnected ? '● Live' : '○ Not connected'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="model-status-row">
+              <span class="stock-status ${st.cls}">${st.label}</span>
+              <div class="model-inv-btns">
+                <button class="btn-sm btn-outline" style="flex:none;padding:5px 10px;font-size:11px" onclick="openModelRestock('${cat.id}','${m.id}')">+ Restock</button>
+                <button class="btn-sm btn-outline" style="flex:none;padding:5px 10px;font-size:11px" onclick="openModelConfig('${cat.id}','${m.id}')">⚙ Config</button>
+              </div>
+            </div>
+          </div>`;
+        }).join('') : '<div style="font-size:12.5px;color:var(--text-3);padding:12px 2px">No models yet. Add one below.</div>'}
       </div>
+
       <div class="cat-add-model-row">
-        <input type="text" id="new-model-${cat.id}" placeholder="Add a model (e.g. Premium Red)" onkeydown="if(event.key==='Enter')addModel('${cat.id}')">
-        <button class="btn-model-add" onclick="addModel('${cat.id}')">+ Add</button>
+        <input type="text" id="new-model-${cat.id}" placeholder="New model name (e.g. Premium Red)" onkeydown="if(event.key==='Enter')addModel('${cat.id}')">
+        <button class="btn-model-add" onclick="addModel('${cat.id}')">+ Add Model</button>
       </div>
     </div>
   `).join('');
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
+/* ── category CRUD ── */
 function addCategory() {
   const input = document.getElementById('new-cat-name');
   const name = input.value.trim();
@@ -2143,103 +2363,163 @@ function addCategory() {
   if (categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
     showToast('warn', 'A category with that name already exists.'); return;
   }
-  const id = 'cat-' + Date.now();
-  categories.push({ id, name, models: [] });
+  categories.push({ id:'cat-'+Date.now(), name, models:[] });
   input.value = '';
   renderCategories();
+  renderDashboardProducts();
   showToast('ok', `Category "${name}" added!`);
 }
 
-function deleteCategory(id) {
-  const cat = categories.find(c => c.id === id);
+function deleteCategory(catId) {
+  const cat = categories.find(c => c.id === catId);
   if (!cat) return;
   if (!confirm(`Delete category "${cat.name}" and all its models?`)) return;
-  categories = categories.filter(c => c.id !== id);
+  categories = categories.filter(c => c.id !== catId);
   renderCategories();
+  renderDashboardProducts();
   showToast('ok', `Category "${cat.name}" deleted.`);
 }
 
 let _editCatSaved = false;
-function startEditCategory(id) {
-  const cat = categories.find(c => c.id === id);
+function startEditCategory(catId) {
+  const cat = categories.find(c => c.id === catId);
   if (!cat) return;
   _editCatSaved = false;
-  const nameEl = document.getElementById(`cat-name-disp-${id}`);
-  nameEl.innerHTML = `<input type="text" value="${escHtml(cat.name)}" id="edit-cat-input-${id}" style="background:var(--bg-elevated);border:1px solid var(--accent);border-radius:6px;padding:3px 8px;color:var(--text-1);font-family:var(--font-display);font-size:14px;font-weight:600;outline:none;width:180px;">`;
-  const inp = document.getElementById(`edit-cat-input-${id}`);
+  const el = document.getElementById(`cat-name-disp-${catId}`);
+  el.innerHTML = `<input type="text" value="${escHtml(cat.name)}" id="eci-${catId}" style="background:var(--bg-elevated);border:1px solid var(--accent);border-radius:6px;padding:3px 8px;color:var(--text-1);font-family:var(--font-display);font-size:14px;font-weight:600;outline:none;width:180px;">`;
+  const inp = document.getElementById(`eci-${catId}`);
   inp.focus(); inp.select();
-  inp.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); saveEditCategory(id, this.value); }
-    if (e.key === 'Escape') renderCategories();
-  });
-  inp.addEventListener('blur', function() {
-    setTimeout(() => saveEditCategory(id, inp.value), 150);
-  });
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();saveEditCategory(catId,inp.value);} if(e.key==='Escape') renderCategories(); });
+  inp.addEventListener('blur', () => setTimeout(()=>saveEditCategory(catId,inp.value),150));
 }
-
-function saveEditCategory(id, value) {
+function saveEditCategory(catId, value) {
   if (_editCatSaved) return; _editCatSaved = true;
-  const newName = (value || '').trim();
-  if (!newName) { renderCategories(); return; }
-  const cat = categories.find(c => c.id === id);
-  if (cat) { cat.name = newName; showToast('ok', `Category renamed to "${newName}".`); }
+  const n = (value||'').trim(); if(!n){renderCategories();return;}
+  const cat = categories.find(c=>c.id===catId);
+  if(cat){cat.name=n; showToast('ok',`Category renamed to "${n}".`);}
   renderCategories();
 }
 
+/* ── model CRUD ── */
 function addModel(catId) {
   const input = document.getElementById(`new-model-${catId}`);
   if (!input) return;
   const name = input.value.trim();
-  if (!name) { showToast('warn', 'Enter a model name.'); input.focus(); return; }
-  const cat = categories.find(c => c.id === catId);
+  if (!name) { showToast('warn','Enter a model name.'); input.focus(); return; }
+  const cat = categories.find(c=>c.id===catId);
   if (!cat) return;
-  if (cat.models.map(m=>m.toLowerCase()).includes(name.toLowerCase())) {
-    showToast('warn', 'Model already exists in this category.'); return;
+  if (cat.models.find(m=>m.name.toLowerCase()===name.toLowerCase())) {
+    showToast('warn','Model already exists in this category.'); return;
   }
-  cat.models.push(name);
+  cat.models.push(makeModel(name));
   renderCategories();
-  showToast('ok', `Model "${name}" added to ${cat.name}.`);
+  renderDashboardProducts();
+  showToast('ok',`Model "${name}" added to ${cat.name}.`);
 }
 
-function deleteModel(catId, idx) {
-  const cat = categories.find(c => c.id === catId);
+function deleteModel(catId, modelId) {
+  const cat = categories.find(c=>c.id===catId);
   if (!cat) return;
-  const modelName = cat.models[idx];
-  cat.models.splice(idx, 1);
+  const m = cat.models.find(m=>m.id===modelId);
+  if (!m) return;
+  cat.models = cat.models.filter(m=>m.id!==modelId);
   renderCategories();
-  showToast('ok', `Model "${modelName}" removed.`);
+  renderDashboardProducts();
+  showToast('ok',`Model "${m.name}" removed.`);
 }
 
 let _editModelSaved = false;
-function startEditModel(catId, idx) {
-  const cat = categories.find(c => c.id === catId);
+function startEditModel(catId, modelId) {
+  const cat = categories.find(c=>c.id===catId);
   if (!cat) return;
+  const m = cat.models.find(m=>m.id===modelId);
+  if (!m) return;
   _editModelSaved = false;
-  const nameEl = document.getElementById(`mname-disp-${catId}-${idx}`);
-  if (!nameEl) return;
-  nameEl.innerHTML = `<input type="text" value="${escHtml(cat.models[idx])}" id="edit-model-inp-${catId}-${idx}" style="background:var(--bg-elevated);border:1px solid var(--accent);border-radius:5px;padding:2px 7px;color:var(--text-1);font-size:13px;outline:none;width:160px;">`;
-  const inp = document.getElementById(`edit-model-inp-${catId}-${idx}`);
+  const el = document.getElementById(`mname-disp-${modelId}`);
+  if (!el) return;
+  el.innerHTML = `<input type="text" value="${escHtml(m.name)}" id="emi-${modelId}" style="background:var(--bg-elevated);border:1px solid var(--accent);border-radius:5px;padding:2px 7px;color:var(--text-1);font-size:13px;outline:none;width:140px;font-weight:600;">`;
+  const inp = document.getElementById(`emi-${modelId}`);
   if (!inp) return;
   inp.focus(); inp.select();
-  inp.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { e.preventDefault(); saveEditModel(catId, idx, this.value); }
-    if (e.key === 'Escape') renderCategories();
-  });
-  inp.addEventListener('blur', function() {
-    setTimeout(() => saveEditModel(catId, idx, inp.value), 150);
-  });
+  inp.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();saveEditModel(catId,modelId,inp.value);} if(e.key==='Escape') renderCategories(); });
+  inp.addEventListener('blur', () => setTimeout(()=>saveEditModel(catId,modelId,inp.value),150));
+}
+function saveEditModel(catId, modelId, value) {
+  if (_editModelSaved) return; _editModelSaved = true;
+  const n = (value||'').trim(); if(!n){renderCategories();return;}
+  const cat = categories.find(c=>c.id===catId);
+  const m = cat && cat.models.find(m=>m.id===modelId);
+  if(m){ m.name=n; showToast('ok',`Model renamed to "${n}".`); }
+  renderCategories();
 }
 
-function saveEditModel(catId, idx, value) {
-  if (_editModelSaved) return; _editModelSaved = true;
-  const newName = (value || '').trim();
-  if (!newName) { renderCategories(); return; }
-  const cat = categories.find(c => c.id === catId);
-  if (cat && cat.models[idx] !== undefined) {
-    cat.models[idx] = newName;
-    showToast('ok', `Model renamed to "${newName}".`);
-  }
+/* ── model restock modal ── */
+let _activeModelCatId = null, _activeModelId = null;
+function openModelRestock(catId, modelId) {
+  const cat = categories.find(c=>c.id===catId);
+  const m = cat && cat.models.find(m=>m.id===modelId);
+  if (!m) return;
+  _activeModelCatId = catId; _activeModelId = modelId;
+  document.getElementById('mr-title').textContent = `Restock — ${m.name}`;
+  document.getElementById('mr-current').textContent = m.stock;
+  document.getElementById('mr-max').textContent = m.max;
+  document.getElementById('mr-new-total').textContent = '—';
+  document.getElementById('mr-qty').value = '';
+  document.getElementById('model-restock-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('mr-qty').focus(),100);
+}
+function confirmModelRestock() {
+  const cat = categories.find(c=>c.id===_activeModelCatId);
+  const m = cat && cat.models.find(m=>m.id===_activeModelId);
+  if (!m) return;
+  const add = parseInt(document.getElementById('mr-qty').value)||0;
+  if (add<=0){showToast('warn','Enter a valid quantity.');return;}
+  const prev = m.stock;
+  m.stock = Math.min(m.stock+add, m.max);
+  showToast('ok',`${m.name} restocked by ${m.stock-prev}. Now: ${m.stock}/${m.max}`);
+  closeModal('model-restock-modal');
   renderCategories();
+  renderDashboardProducts();
+  renderMetrics();
+}
+document.getElementById('mr-qty') && document.getElementById('mr-qty').addEventListener('input', function(){
+  const cat = categories.find(c=>c.id===_activeModelCatId);
+  const m = cat && cat.models.find(m=>m.id===_activeModelId);
+  if (!m) return;
+  const add = parseInt(this.value)||0;
+  document.getElementById('mr-new-total').textContent = Math.min(m.stock+add,m.max) + ' / ' + m.max;
+});
+
+/* ── model config modal ── */
+function openModelConfig(catId, modelId) {
+  const cat = categories.find(c=>c.id===catId);
+  const m = cat && cat.models.find(m=>m.id===modelId);
+  if (!m) return;
+  _activeModelCatId = catId; _activeModelId = modelId;
+  document.getElementById('mc-title').textContent = `Config — ${m.name}`;
+  document.getElementById('mc-stock').value = m.stock;
+  document.getElementById('mc-max').value = m.max;
+  document.getElementById('mc-threshold').value = m.threshold;
+  document.getElementById('mc-sensor').checked = m.sensorConnected;
+  document.getElementById('model-config-modal').classList.add('open');
+}
+function confirmModelConfig() {
+  const cat = categories.find(c=>c.id===_activeModelCatId);
+  const m = cat && cat.models.find(m=>m.id===_activeModelId);
+  if (!m) return;
+  const stock = parseInt(document.getElementById('mc-stock').value);
+  const max   = parseInt(document.getElementById('mc-max').value);
+  const thr   = parseInt(document.getElementById('mc-threshold').value);
+  const sensor= document.getElementById('mc-sensor').checked;
+  if (isNaN(max)||max<1){showToast('warn','Max must be at least 1.');return;}
+  if (isNaN(thr)||thr>=max){showToast('warn','Threshold must be less than max.');return;}
+  m.stock = Math.min(isNaN(stock)?m.stock:Math.max(0,stock), max);
+  m.max = max; m.threshold = thr; m.sensorConnected = sensor;
+  showToast('ok',`${m.name} settings saved.`);
+  closeModal('model-config-modal');
+  renderCategories();
+  renderDashboardProducts();
+  renderMetrics();
 }
 
 // ═══════════════════════════════════════════════════════
