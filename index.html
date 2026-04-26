@@ -356,6 +356,8 @@ body{
   flex-direction:column;
   gap:18px;
   transition:border-color .2s;
+  min-width:0;
+  overflow:hidden;
 }
 .product-card:hover{border-color:var(--border-md)}
 
@@ -364,7 +366,7 @@ body{
   align-items:flex-start;
   justify-content:space-between;
 }
-.product-identity{display:flex;align-items:center;gap:12px}
+.product-identity{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .product-icon{
   width:44px;height:44px;
   background:var(--bg-elevated);
@@ -404,7 +406,7 @@ body{
 .gauge-pct{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-1)}
 .gauge-sub{font-size:9px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-.stock-info{flex:1;display:flex;flex-direction:column;gap:8px}
+.stock-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .stock-row{display:flex;justify-content:space-between;align-items:center}
 .stock-row-label{font-size:11.5px;color:var(--text-3)}
 .stock-row-val{font-family:var(--font-mono);font-size:13px;color:var(--text-1);font-weight:500}
@@ -726,6 +728,13 @@ body{
   .charts-row{grid-template-columns:1fr}
   .bottom-row{grid-template-columns:1fr}
   .metrics-row{grid-template-columns:repeat(2,1fr)}
+  /* Switch product cards to single column before they get too narrow */
+  .products-grid{grid-template-columns:1fr}
+  /* Tighten gauge row for medium viewports */
+  .gauge-wrap{width:90px;height:90px}
+  .gauge-wrap svg{width:90px;height:90px}
+  .gauge-pct{font-size:16px}
+  .gauge-row{gap:14px}
 }
 @media(max-width:680px){
   body{flex-direction:column;overflow:auto}
@@ -751,12 +760,44 @@ body{
   .chart-area-sm{height:160px}
   .bottom-row{grid-template-columns:1fr}
   .txn-table th:nth-child(4),.txn-table td:nth-child(4){display:none}
+
+  /* ── Product card mobile fixes ── */
+  .product-card{padding:14px;gap:14px}
+  /* Allow header to wrap when product name + badge are too wide */
+  .product-header{flex-wrap:wrap;gap:6px}
+  .product-identity{min-width:0;flex:1}
+  .product-name{font-size:14px;word-break:break-word}
+  /* Compact gauge */
+  .gauge-wrap{width:84px;height:84px}
+  .gauge-wrap svg{width:84px;height:84px}
+  .gauge-pct{font-size:15px}
+  .gauge-row{gap:12px;align-items:flex-start}
+  /* Compact model rows: hide decorative bar and sensor dot to save space */
+  .dash-model-bar-wrap{display:none}
+  .dash-model-sensor{display:none}
+  .dash-model-name{font-size:11.5px}
+  .dash-model-count{font-size:11px;min-width:34px}
+  .dash-model-badge{font-size:9.5px;padding:1px 5px}
+  /* Restock button row */
+  .product-actions{flex-wrap:wrap}
 }
 @media(max-width:400px){
   .metrics-row{grid-template-columns:1fr}
-  .gauge-row{flex-direction:column;align-items:flex-start}
+  /* Stack gauge vertically on very small phones */
+  .gauge-row{flex-direction:column;align-items:flex-start;gap:10px}
+  .gauge-wrap{width:76px;height:76px}
+  .gauge-wrap svg{width:76px;height:76px}
+  .gauge-pct{font-size:13px}
   .chart-area{height:140px}
   .chart-area-sm{height:140px}
+  /* Product header fully wraps */
+  .product-header{flex-direction:column;align-items:flex-start;gap:8px}
+  .stock-status{align-self:flex-start}
+  /* Show stock info full width when gauge stacks */
+  .stock-info{width:100%}
+  /* Allow model row items to wrap */
+  .dash-model-row{flex-wrap:wrap;row-gap:2px}
+  .dash-model-name{min-width:60%;font-size:11px}
 }
 
 /* ── CATEGORIES ── */
@@ -1050,6 +1091,10 @@ body{
 @media(max-width:400px){
   .cat-models-grid{grid-template-columns:1fr}
 }
+
+/* ── gauge SVG: let CSS control size, not HTML attributes ── */
+.gauge-wrap svg{display:block;width:100%;height:100%}
+.model-gauge-wrap svg{display:block;width:100%;height:100%}
 
 .gauge-track{stroke:#e2e8f0}
 html.dark .gauge-track{stroke:#1e2a42}
