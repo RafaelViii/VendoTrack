@@ -353,6 +353,8 @@ body{
   flex-direction:column;
   gap:18px;
   transition:border-color .2s;
+  overflow:hidden;
+  min-width:0;
 }
 .product-card:hover{border-color:var(--border-md)}
 
@@ -401,7 +403,7 @@ body{
 .gauge-pct{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-1)}
 .gauge-sub{font-size:9px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-.stock-info{flex:1;display:flex;flex-direction:column;gap:8px}
+.stock-info{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;overflow:hidden}
 .stock-row{display:flex;justify-content:space-between;align-items:center}
 .stock-row-label{font-size:11.5px;color:var(--text-3)}
 .stock-row-val{font-family:var(--font-mono);font-size:13px;color:var(--text-1);font-weight:500}
@@ -789,12 +791,38 @@ body{
   .chart-area-sm{height:160px}
   .bottom-row{grid-template-columns:1fr}
   .txn-table th:nth-child(4),.txn-table td:nth-child(4){display:none}
+
+  /* ── PRODUCT CARD mobile fixes ── */
+  .product-card{padding:14px;gap:12px}
+  .product-header{flex-wrap:wrap;gap:6px}
+  .product-identity{min-width:0}
+  .product-name{font-size:14px}
+  .gauge-wrap{width:80px;height:80px;flex-shrink:0}
+  .gauge-wrap svg{width:80px;height:80px}
+  .gauge-pct{font-size:14px}
+  .gauge-sub{font-size:8px}
+  .gauge-row{gap:12px;min-width:0}
+  .stock-info{min-width:0;overflow:hidden}
+  .dash-model-row{gap:5px;flex-wrap:nowrap;overflow:hidden}
+  .dash-model-name{font-size:11px;min-width:0}
+  .dash-model-bar-wrap{width:36px}
+  .dash-model-count{min-width:32px;font-size:10px}
+  .dash-model-badge{font-size:9px;padding:1px 4px}
+  .dash-model-sensor{display:none}
+  .product-actions{flex-wrap:wrap}
 }
 @media(max-width:400px){
   .metrics-row{grid-template-columns:1fr}
-  .gauge-row{flex-direction:column;align-items:flex-start}
   .chart-area{height:140px}
   .chart-area-sm{height:140px}
+
+  /* ── PRODUCT CARD very small screen ── */
+  .gauge-row{flex-direction:column;align-items:stretch;gap:10px}
+  .gauge-wrap{width:70px;height:70px;align-self:center}
+  .gauge-wrap svg{width:70px;height:70px}
+  .stock-info{width:100%}
+  .dash-model-bar-wrap{display:none}
+  .dash-model-badge{display:none}
 }
 
 /* ── CATEGORIES ── */
@@ -1107,13 +1135,15 @@ html.dark .gauge-track{stroke:#1e2a42}
 .theme-toggle:hover{background:var(--bg-hover);color:var(--text-1)}
 
 /* ── DASHBOARD CATEGORY CARD MODEL BREAKDOWN ── */
-.dash-model-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.dash-model-list{display:flex;flex-direction:column;gap:6px;margin-top:4px;min-width:0;overflow:hidden}
 .dash-model-row{
   display:flex;align-items:center;gap:8px;
   padding:6px 8px;
   background:var(--bg-elevated);
   border:1px solid var(--border);
   border-radius:7px;
+  min-width:0;
+  overflow:hidden;
 }
 .dash-model-name{flex:1;font-size:12px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dash-model-bar-wrap{width:56px;height:4px;background:var(--border-md);border-radius:2px;overflow:hidden;flex-shrink:0}
@@ -1419,14 +1449,13 @@ html.dark .gauge-track{stroke:#1e2a42}
       </div>
 
       <div class="fb-note">
-        <b>How to get your credentials:</b><br>
-        1. Go to <code>Firebase Console</code> → Your Project → <code>Realtime Database</code><br>
-        2. Copy the <code>Database URL</code> shown at the top (looks like <code>https://xxx-rtdb.firebaseio.com</code>)<br>
-        3. Go to <code>Project Settings → Service Accounts → Database Secrets</code> → Add a secret and copy it<br>
-        4. Paste both above and click <b>Connect</b><br>
+        <b>Getting the credentials:</b><br>
+        1. Open <code>Firebase Console</code> → your project → <code>Realtime Database</code><br>
+        2. Grab the <code>Database URL</code> at the top — it looks like <code>https://xxx-rtdb.firebaseio.com</code><br>
+        3. Go to <code>Project Settings → Service Accounts → Database Secrets</code>, add a new secret, and copy it<br>
+        4. Paste both fields above and hit <b>Connect</b><br>
         <br>
-        <b>What this does:</b> When you save prices on this page → ESP32 reads them instantly.
-        When ESP32 dispenses a product → this page logs the transaction with the current browser time (no RTC on hardware needed).
+        <b>What it actually does:</b> Any price I update here gets pushed to the ESP32 right away. And whenever the machine dispenses something, the sale gets logged here using the browser's current time — so no RTC module needed on the hardware side.
       </div>
     </div>
 
