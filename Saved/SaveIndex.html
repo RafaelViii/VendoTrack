@@ -6,8 +6,11 @@
 <title>VendoTrack — Vendo Monitor</title>
 
 <!-- ═══════════════════════════════════════════════════════════
-     FIREBASE SDK — Active (REST API mode via fetch, no SDK needed)
+     FIREBASE SDK — Uncomment these when you're ready to connect
      ═══════════════════════════════════════════════════════════ -->
+<!-- <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script> -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -353,6 +356,8 @@ body{
   flex-direction:column;
   gap:18px;
   transition:border-color .2s;
+  min-width:0;
+  overflow:hidden;
 }
 .product-card:hover{border-color:var(--border-md)}
 
@@ -361,7 +366,7 @@ body{
   align-items:flex-start;
   justify-content:space-between;
 }
-.product-identity{display:flex;align-items:center;gap:12px}
+.product-identity{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
 .product-icon{
   width:44px;height:44px;
   background:var(--bg-elevated);
@@ -401,7 +406,7 @@ body{
 .gauge-pct{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-1)}
 .gauge-sub{font-size:9px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-.stock-info{flex:1;display:flex;flex-direction:column;gap:8px}
+.stock-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
 .stock-row{display:flex;justify-content:space-between;align-items:center}
 .stock-row-label{font-size:11.5px;color:var(--text-3)}
 .stock-row-val{font-family:var(--font-mono);font-size:13px;color:var(--text-1);font-weight:500}
@@ -528,47 +533,6 @@ body{
   align-self:flex-start;
 }
 .btn-save:hover{background:#2563eb}
-
-/* ── FIREBASE CONFIG CARD ── */
-.firebase-card{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px 20px;
-  display:flex;flex-direction:column;gap:14px;
-}
-.firebase-status-row{
-  display:flex;align-items:center;gap:10px;padding:10px 12px;
-  background:var(--bg-elevated);border-radius:var(--r);
-  border:1px solid var(--border);font-size:12.5px;
-}
-.fb-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);flex-shrink:0}
-.fb-dot.connected{background:var(--success);animation:pulse-conn 2s ease infinite}
-.fb-input{
-  background:var(--bg-elevated);border:1px solid var(--border-md);
-  border-radius:8px;padding:8px 12px;color:var(--text-1);
-  font-family:var(--font-mono);font-size:12px;width:100%;outline:none;
-  transition:border-color .15s;
-}
-.fb-input:focus{border-color:var(--accent)}
-.fb-input::placeholder{color:var(--text-3)}
-.fb-btn-row{display:flex;gap:8px;flex-wrap:wrap}
-.btn-fb-connect{
-  padding:8px 16px;background:var(--accent);color:#fff;border:none;
-  border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;
-  font-family:var(--font-ui);transition:background .15s;
-}
-.btn-fb-connect:hover{background:var(--accent-dim)}
-.btn-fb-disconnect{
-  padding:8px 14px;background:transparent;color:var(--danger);
-  border:1px solid var(--danger);border-radius:8px;font-size:12px;
-  cursor:pointer;font-family:var(--font-ui);transition:all .15s;
-}
-.btn-fb-disconnect:hover{background:var(--danger-bg)}
-.fb-note{font-size:11px;color:var(--text-3);line-height:1.6}
-.fb-note code{
-  background:var(--bg-elevated);padding:1px 5px;
-  border-radius:4px;font-family:var(--font-mono);font-size:10.5px;
-  color:var(--accent);
-}
 
 /* ── NOTIFICATIONS ── */
 .notif-card{
@@ -764,6 +728,13 @@ body{
   .charts-row{grid-template-columns:1fr}
   .bottom-row{grid-template-columns:1fr}
   .metrics-row{grid-template-columns:repeat(2,1fr)}
+  /* Switch product cards to single column before they get too narrow */
+  .products-grid{grid-template-columns:1fr}
+  /* Tighten gauge row for medium viewports */
+  .gauge-wrap{width:90px;height:90px}
+  .gauge-wrap svg{width:90px;height:90px}
+  .gauge-pct{font-size:16px}
+  .gauge-row{gap:14px}
 }
 @media(max-width:680px){
   body{flex-direction:column;overflow:auto}
@@ -789,12 +760,44 @@ body{
   .chart-area-sm{height:160px}
   .bottom-row{grid-template-columns:1fr}
   .txn-table th:nth-child(4),.txn-table td:nth-child(4){display:none}
+
+  /* ── Product card mobile fixes ── */
+  .product-card{padding:14px;gap:14px}
+  /* Allow header to wrap when product name + badge are too wide */
+  .product-header{flex-wrap:wrap;gap:6px}
+  .product-identity{min-width:0;flex:1}
+  .product-name{font-size:14px;word-break:break-word}
+  /* Compact gauge */
+  .gauge-wrap{width:84px;height:84px}
+  .gauge-wrap svg{width:84px;height:84px}
+  .gauge-pct{font-size:15px}
+  .gauge-row{gap:12px;align-items:flex-start}
+  /* Compact model rows: hide decorative bar and sensor dot to save space */
+  .dash-model-bar-wrap{display:none}
+  .dash-model-sensor{display:none}
+  .dash-model-name{font-size:11.5px}
+  .dash-model-count{font-size:11px;min-width:34px}
+  .dash-model-badge{font-size:9.5px;padding:1px 5px}
+  /* Restock button row */
+  .product-actions{flex-wrap:wrap}
 }
 @media(max-width:400px){
   .metrics-row{grid-template-columns:1fr}
-  .gauge-row{flex-direction:column;align-items:flex-start}
+  /* Stack gauge vertically on very small phones */
+  .gauge-row{flex-direction:column;align-items:flex-start;gap:10px}
+  .gauge-wrap{width:76px;height:76px}
+  .gauge-wrap svg{width:76px;height:76px}
+  .gauge-pct{font-size:13px}
   .chart-area{height:140px}
   .chart-area-sm{height:140px}
+  /* Product header fully wraps */
+  .product-header{flex-direction:column;align-items:flex-start;gap:8px}
+  .stock-status{align-self:flex-start}
+  /* Show stock info full width when gauge stacks */
+  .stock-info{width:100%}
+  /* Allow model row items to wrap */
+  .dash-model-row{flex-wrap:wrap;row-gap:2px}
+  .dash-model-name{min-width:60%;font-size:11px}
 }
 
 /* ── CATEGORIES ── */
@@ -1088,6 +1091,10 @@ body{
 @media(max-width:400px){
   .cat-models-grid{grid-template-columns:1fr}
 }
+
+/* ── gauge SVG: let CSS control size, not HTML attributes ── */
+.gauge-wrap svg{display:block;width:100%;height:100%}
+.model-gauge-wrap svg{display:block;width:100%;height:100%}
 
 .gauge-track{stroke:#e2e8f0}
 html.dark .gauge-track{stroke:#1e2a42}
@@ -1385,51 +1392,6 @@ html.dark .gauge-track{stroke:#1e2a42}
       </div>
     </div>
 
-    <!-- FIREBASE CONNECTION CARD -->
-    <div class="firebase-card" id="firebase-card">
-      <div class="section-header">
-        <div>
-          <div class="section-title">🔥 Firebase Connection</div>
-          <div class="section-hint">Links website to your ESP32 vendo machine in real time</div>
-        </div>
-        <div class="firebase-status-row" style="padding:6px 10px">
-          <div class="fb-dot" id="fb-dot"></div>
-          <span id="fb-status-label" style="font-size:11.5px;color:var(--text-2)">Not connected</span>
-          <span id="fb-last-signal" style="font-size:10px;color:var(--text-3);margin-left:8px"></span>
-        </div>
-      </div>
-
-      <div style="display:grid;gap:8px">
-        <div>
-          <div style="font-size:11.5px;color:var(--text-2);margin-bottom:4px;font-weight:500">Database URL</div>
-          <input class="fb-input" type="text" id="fb-url-input"
-            placeholder="https://YOUR-PROJECT-default-rtdb.firebaseio.com">
-        </div>
-        <div>
-          <div style="font-size:11.5px;color:var(--text-2);margin-bottom:4px;font-weight:500">Database Secret / Auth Token</div>
-          <input class="fb-input" type="password" id="fb-secret-input"
-            placeholder="Your database secret key">
-        </div>
-      </div>
-
-      <div class="fb-btn-row">
-        <button class="btn-fb-connect" onclick="connectFirebase()">Connect to Firebase</button>
-        <button class="btn-fb-disconnect" id="fb-disconnect-btn" style="display:none" onclick="disconnectFirebase()">Disconnect</button>
-        <button class="btn-fb-connect" style="background:var(--success)" onclick="testFirebaseConnection()">Test Connection</button>
-      </div>
-
-      <div class="fb-note">
-        <b>How to get your credentials:</b><br>
-        1. Go to <code>Firebase Console</code> → Your Project → <code>Realtime Database</code><br>
-        2. Copy the <code>Database URL</code> shown at the top (looks like <code>https://xxx-rtdb.firebaseio.com</code>)<br>
-        3. Go to <code>Project Settings → Service Accounts → Database Secrets</code> → Add a secret and copy it<br>
-        4. Paste both above and click <b>Connect</b><br>
-        <br>
-        <b>What this does:</b> When you save prices on this page → ESP32 reads them instantly.
-        When ESP32 dispenses a product → this page logs the transaction with the current browser time (no RTC on hardware needed).
-      </div>
-    </div>
-
     <!-- TRANSACTIONS -->
     <div class="txn-card">
       <div class="section-header">
@@ -1604,9 +1566,20 @@ html.dark .gauge-track{stroke:#1e2a42}
 <div class="toast-container" id="toast-container"></div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     FIREBASE REST API INTEGRATION
-     No SDK needed — uses native fetch() to talk to Firebase RTDB.
-     User enters DB URL + secret in the Settings → Firebase card.
+     FIREBASE CONFIG — Paste your config here to connect
+     ═══════════════════════════════════════════════════════════════════
+     const firebaseConfig = {
+       apiKey: "YOUR_API_KEY",
+       authDomain: "YOUR_PROJECT.firebaseapp.com",
+       databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+       projectId: "YOUR_PROJECT_ID",
+       storageBucket: "YOUR_PROJECT.appspot.com",
+       messagingSenderId: "YOUR_SENDER_ID",
+       appId: "YOUR_APP_ID"
+     };
+     firebase.initializeApp(firebaseConfig);
+     const db = firebase.firestore();
+     const rtdb = firebase.database();
      ═══════════════════════════════════════════════════════════════════ -->
 
 <script>
@@ -1839,15 +1812,11 @@ function renderTransactions() {
     const icon = isBp
       ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="1.8"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>`
       : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
-    const isHw = t.source === 'ESP32';
-    const methodBadge = isHw
-      ? `<span class="txn-method-badge" style="background:var(--success-bg);color:var(--success);border-color:var(--success)">⚡ ESP32</span>`
-      : `<span class="txn-method-badge">${t.method}</span>`;
     return `<tr>
       <td><div class="txn-product"><div class="txn-product-icon">${icon}</div>${t.product}</div></td>
       <td class="txn-qty">${t.qty}x</td>
       <td class="txn-amount">₱${t.amount.toFixed(2)}</td>
-      <td>${methodBadge}</td>
+      <td><span class="txn-method-badge">${t.method}</span></td>
       <td class="txn-time">${t.time}</td>
     </tr>`;
   }).join('');
@@ -2020,23 +1989,12 @@ function saveAllSettings() {
   checkStockAlerts();
   addNotification('ok', 'Settings saved successfully.');
 
-  // ── Push updated prices to Firebase so ESP32 reads them
-  if (fb.connected) {
-    fb.put('/config/prices', {
-      ballpen:   state.ballpen.price,
-      bondpaper: state.paper.price,
-      updatedAt: new Date().toISOString()
-    }).then(ok => {
-      if (ok) {
-        showToast('ok', `Prices pushed to Firebase → ESP32 will update within 30s`);
-        addNotification('info', `Firebase price sync: Ballpen ₱${state.ballpen.price.toFixed(2)}, Bond Paper ₱${state.paper.price.toFixed(2)}`);
-      } else {
-        showToast('warn', 'Settings saved locally but Firebase sync failed. Check connection.');
-      }
-    });
-  } else {
-    showToast('warn', 'Settings saved locally. Connect Firebase to sync prices to hardware.');
-  }
+  // ── FIREBASE: push settings to Firestore ──
+  // db.collection('settings').doc('vendo').set({
+  //   ballpen: { max: bpMax, threshold: bpThresh, price: bpPrice },
+  //   paper:   { max: ppMax, threshold: ppThresh, price: ppPrice },
+  //   updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  // });
 }
 
 function loadSettingsToForm() {
@@ -2223,230 +2181,78 @@ function simulateSale(key, qty) {
   const now = new Date();
   const time = now.toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'});
   state.transactions.push({
-    product: p.name, qty, amount, method: 'Demo', time
+    product: p.name, qty, amount, method: Math.random() > .5 ? 'Coin' : 'Bill', time
   });
   renderProduct(key);
   renderMetrics();
   renderTransactions();
   checkStockAlerts();
+
+  // ── FIREBASE: log transaction to Firestore ──
+  // db.collection('transactions').add({
+  //   product: p.name, qty, amount, method: 'Coin',
+  //   timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  // });
+  //
+  // ── FIREBASE: update stock in Realtime DB ──
+  // rtdb.ref('stock/' + key).set(p.stock);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// FIREBASE REALTIME DATABASE — REST API (No SDK required)
-// ═══════════════════════════════════════════════════════════════
-// Architecture:
-//   Website  → /config/prices         (ESP32 reads every 30s)
-//   ESP32    → /dispense_signal       (website listens → logs with JS timestamp)
-//   Website  → /dispense_signal       (resets triggered=false after logging)
-// ─────────────────────────────────────────────────────────────
-const fb = {
-  url:       '',
-  secret:    '',
-  connected: false,
-  pollTimer: null,
+// ═══════════════════════════════════════════════════════
+// FIREBASE INTEGRATION PLACEHOLDERS
+// ═══════════════════════════════════════════════════════
+// Uncomment and configure these after setting up Firebase above
+//
+// function initFirebase() {
+//   // Listen to stock from ESP32 via Realtime Database
+//   rtdb.ref('stock').on('value', snap => {
+//     const data = snap.val();
+//     if (data?.ballpen !== undefined) state.ballpen.stock = data.ballpen;
+//     if (data?.paper !== undefined) state.paper.stock = data.paper;
+//     renderProduct('ballpen');
+//     renderProduct('paper');
+//     renderMetrics();
+//     checkStockAlerts();
+//   });
+//
+//   // Listen to new transactions from Firestore
+//   db.collection('transactions')
+//     .where('timestamp', '>=', new Date(new Date().setHours(0,0,0,0)))
+//     .orderBy('timestamp','desc')
+//     .onSnapshot(snap => {
+//       state.transactions = snap.docs.map(d => d.data());
+//       renderTransactions();
+//     });
+//
+//   // Listen to settings
+//   db.collection('settings').doc('vendo').onSnapshot(doc => {
+//     const d = doc.data();
+//     if (d) {
+//       Object.assign(state.ballpen, d.ballpen);
+//       Object.assign(state.paper, d.paper);
+//       loadSettingsToForm();
+//       renderProduct('ballpen');
+//       renderProduct('paper');
+//     }
+//   });
+//
+//   document.getElementById('conn-dot').classList.remove('offline');
+//   document.getElementById('conn-label').textContent = 'Connected';
+//   document.getElementById('conn-name').textContent = 'Firebase';
+// }
 
-  // Low-level GET
-  async get(path) {
-    const resp = await fetch(`${this.url}${path}.json?auth=${this.secret}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    return resp.json();
-  },
-
-  // Low-level PUT (overwrite)
-  async put(path, data) {
-    try {
-      const resp = await fetch(`${this.url}${path}.json?auth=${this.secret}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      return resp.ok;
-    } catch (e) {
-      return false;
+// ═══════════════════════════════════════════════════════
+// SIMULATE DEMO SALES (remove when using real Firebase)
+// ═══════════════════════════════════════════════════════
+let demoInterval;
+function startDemoMode() {
+  demoInterval = setInterval(() => {
+    if (Math.random() < 0.3) {
+      const key = Math.random() < 0.6 ? 'ballpen' : 'paper';
+      const qty = key === 'paper' ? (Math.random() < .5 ? 1 : 5) : 1;
+      simulateSale(key, qty);
     }
-  },
-
-  // Verify a real connection by pinging /.json
-  async test(url, secret) {
-    try {
-      const resp = await fetch(`${url}/.json?auth=${secret}&shallow=true`,
-                               { signal: AbortSignal.timeout(6000) });
-      return resp.ok;
-    } catch { return false; }
-  }
-};
-
-// ── UI helpers ──────────────────────────────────────────────
-function setFbStatus(connected, label) {
-  const dot   = document.getElementById('fb-dot');
-  const lbl   = document.getElementById('fb-status-label');
-  const disc  = document.getElementById('fb-disconnect-btn');
-  if (!dot) return;
-  dot.classList.toggle('connected', connected);
-  lbl.textContent = label;
-  disc.style.display = connected ? 'inline-block' : 'none';
-  // Update sidebar indicator
-  const connDot   = document.getElementById('conn-dot');
-  const connLabel = document.getElementById('conn-label');
-  const connName  = document.getElementById('conn-name');
-  if (connDot)   connDot.classList.toggle('offline', !connected);
-  if (connLabel) connLabel.textContent = connected ? 'Connected' : 'Disconnected';
-  if (connName)  connName.textContent  = connected ? 'Firebase' : 'Offline';
-}
-
-// ── Test connection without saving ──────────────────────────
-async function testFirebaseConnection() {
-  const url    = document.getElementById('fb-url-input').value.trim().replace(/\/$/, '');
-  const secret = document.getElementById('fb-secret-input').value.trim();
-  if (!url || !secret) { showToast('warn', 'Enter database URL and secret first.'); return; }
-  setFbStatus(false, 'Testing...');
-  const ok = await fb.test(url, secret);
-  if (ok) {
-    showToast('ok', 'Connection test passed! Click Connect to activate.');
-    setFbStatus(false, 'Test OK — click Connect');
-  } else {
-    showToast('danger', 'Connection failed. Check URL and secret.');
-    setFbStatus(false, 'Test failed');
-  }
-}
-
-// ── Connect ──────────────────────────────────────────────────
-async function connectFirebase() {
-  const url    = document.getElementById('fb-url-input').value.trim().replace(/\/$/, '');
-  const secret = document.getElementById('fb-secret-input').value.trim();
-  if (!url || !secret) { showToast('warn', 'Enter both the Database URL and Database Secret.'); return; }
-
-  setFbStatus(false, 'Connecting...');
-  const ok = await fb.test(url, secret);
-  if (!ok) {
-    setFbStatus(false, 'Connection failed');
-    showToast('danger', 'Could not connect to Firebase. Check URL and secret.');
-    return;
-  }
-
-  fb.url    = url;
-  fb.secret = secret;
-  fb.connected = true;
-  localStorage.setItem('vt-fb-url',    url);
-  localStorage.setItem('vt-fb-secret', secret);
-
-  setFbStatus(true, 'Connected to Firebase');
-  showToast('ok', 'Firebase connected! Hardware sync is now active.');
-  addNotification('ok', 'Firebase connected — hardware price sync active.');
-
-  // Push current prices immediately so ESP32 can pick them up
-  await fb.put('/config/prices', {
-    ballpen:   state.ballpen.price,
-    bondpaper: state.paper.price,
-    updatedAt: new Date().toISOString()
-  });
-
-  // Start polling for dispense signals from ESP32
-  startDispenseSignalListener();
-}
-
-// ── Disconnect ────────────────────────────────────────────────
-function disconnectFirebase() {
-  fb.connected = false;
-  fb.url = ''; fb.secret = '';
-  if (fb.pollTimer) { clearInterval(fb.pollTimer); fb.pollTimer = null; }
-  localStorage.removeItem('vt-fb-url');
-  localStorage.removeItem('vt-fb-secret');
-  setFbStatus(false, 'Disconnected');
-  showToast('info', 'Firebase disconnected.');
-}
-
-// ── Listen for dispense signal from ESP32 ────────────────────
-// ESP32 sets /dispense_signal.triggered = true when it vends.
-// Website reads it, logs the transaction with JS Date() (no RTC needed),
-// then resets triggered = false.
-let _lastSignalHandled = false;
-
-function startDispenseSignalListener() {
-  if (fb.pollTimer) clearInterval(fb.pollTimer);
-  fb.pollTimer = setInterval(checkDispenseSignal, 3000); // poll every 3 s
-  checkDispenseSignal(); // immediate first check
-}
-
-async function checkDispenseSignal() {
-  if (!fb.connected) return;
-  try {
-    const signal = await fb.get('/dispense_signal');
-    if (!signal || !signal.triggered) { _lastSignalHandled = false; return; }
-    if (_lastSignalHandled) return; // already handled this signal
-    _lastSignalHandled = true;
-
-    // ── Use software timestamp (browser time) — no RTC on ESP32
-    const now  = new Date();
-    const time = now.toLocaleTimeString('en-PH', {hour:'2-digit', minute:'2-digit'});
-    const dateStr = now.toLocaleDateString('en-PH', {
-      weekday:'short', month:'short', day:'numeric'
-    });
-
-    const product   = signal.product  || 'Unknown';
-    const price     = parseFloat(signal.price)    || 0;
-    const inserted  = parseFloat(signal.inserted) || 0;
-    const change    = parseFloat(signal.change)   || 0;
-    const qty       = parseInt(signal.qty)        || 1;
-    const fbKey     = signal.fbKey || (product === 'Ballpen' ? 'ballpen' : 'bondpaper');
-
-    // ── Update local state revenue/sold counters
-    if (fbKey === 'ballpen') {
-      state.ballpen.soldToday += qty;
-      state.ballpen.stock = Math.max(0, state.ballpen.stock - qty);
-    } else if (fbKey === 'bondpaper') {
-      state.paper.soldToday += qty;
-      state.paper.stock = Math.max(0, state.paper.stock - qty);
-    }
-
-    // ── Log transaction with software timestamp
-    state.transactions.push({
-      product, qty, amount: price * qty, method: 'Coin', time,
-      inserted, change, source: 'ESP32'
-    });
-
-    // ── Re-render
-    renderProduct('ballpen'); renderProduct('paper');
-    renderMetrics(); renderTransactions(); checkStockAlerts();
-
-    // ── Notify
-    showToast('ok', `ESP32 dispensed ${qty}× ${product} at ${time}`);
-    addNotification('ok',
-      `Hardware sale: ${qty}× ${product} — ₱${(price*qty).toFixed(2)} received, change ₱${change.toFixed(2)} — ${dateStr} ${time}`
-    );
-    document.getElementById('fb-last-signal').textContent = `Last sale: ${time}`;
-
-    // Flash new transaction badge in nav
-    const badge = document.getElementById('new-txn-badge');
-    if (badge) { badge.style.display = 'inline'; setTimeout(() => badge.style.display='none', 5000); }
-
-    // ── Reset the signal in Firebase so ESP32 can send next one
-    await fb.put('/dispense_signal', { triggered: false });
-
-    // ── Also push updated stock to Firebase
-    await fb.put('/stock', {
-      ballpen:   state.ballpen.stock,
-      bondpaper: state.paper.stock
-    });
-
-  } catch(e) {
-    // Network blip — silently skip, will retry in 3 s
-    console.warn('[Firebase] Signal check error:', e.message);
-  }
-}
-
-// ── Auto-restore saved Firebase config on page load ──────────
-function tryRestoreFbConnection() {
-  const savedUrl    = localStorage.getItem('vt-fb-url');
-  const savedSecret = localStorage.getItem('vt-fb-secret');
-  if (savedUrl && savedSecret) {
-    document.getElementById('fb-url-input').value    = savedUrl;
-    document.getElementById('fb-secret-input').value = savedSecret;
-    // Silently reconnect
-    connectFirebase();
-  } else {
-    setFbStatus(false, 'Not connected — enter credentials above');
-  }
+  }, 8000);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2460,25 +2266,8 @@ function init() {
   renderTransactions();
   initCharts();
   checkStockAlerts();
-
-  // Set sidebar to offline until Firebase connects
-  const connDot = document.getElementById('conn-dot');
-  const connLabel = document.getElementById('conn-label');
-  if (connDot) connDot.classList.add('offline');
-  if (connLabel) connLabel.textContent = 'Disconnected';
-
-  // Demo mode only runs if Firebase is NOT connected
-  // (simulates sales so the dashboard looks alive during offline testing)
-  demoInterval = setInterval(() => {
-    if (!fb.connected && Math.random() < 0.3) {
-      const key = Math.random() < 0.6 ? 'ballpen' : 'paper';
-      const qty = key === 'paper' ? (Math.random() < .5 ? 1 : 5) : 1;
-      simulateSale(key, qty);
-    }
-  }, 8000);
-
-  // Auto-restore Firebase connection from localStorage
-  setTimeout(tryRestoreFbConnection, 500);
+  startDemoMode();
+  // initFirebase(); // ← Uncomment when Firebase is set up
 }
 
 // ═══════════════════════════════════════════════════════
