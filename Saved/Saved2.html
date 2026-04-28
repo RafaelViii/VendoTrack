@@ -353,6 +353,8 @@ body{
   flex-direction:column;
   gap:18px;
   transition:border-color .2s;
+  overflow:hidden;
+  min-width:0;
 }
 .product-card:hover{border-color:var(--border-md)}
 
@@ -401,7 +403,7 @@ body{
 .gauge-pct{font-family:var(--font-mono);font-size:18px;font-weight:500;color:var(--text-1)}
 .gauge-sub{font-size:9px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
 
-.stock-info{flex:1;display:flex;flex-direction:column;gap:8px}
+.stock-info{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;overflow:hidden}
 .stock-row{display:flex;justify-content:space-between;align-items:center}
 .stock-row-label{font-size:11.5px;color:var(--text-3)}
 .stock-row-val{font-family:var(--font-mono);font-size:13px;color:var(--text-1);font-weight:500}
@@ -483,24 +485,6 @@ body{
   border-bottom:1px solid var(--border);
 }
 .setting-row:last-of-type{border-bottom:none;padding-bottom:0}
-.setting-divider{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:10.5px;
-  color:var(--text-3);
-  font-family:var(--font-mono);
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  margin:2px 0 6px;
-}
-.setting-divider::before,
-.setting-divider::after{
-  content:'';
-  height:1px;
-  background:var(--border);
-  flex:1;
-}
 .setting-label{font-size:12px;color:var(--text-2);font-weight:500}
 .setting-desc{font-size:11px;color:var(--text-3)}
 .setting-controls{display:flex;align-items:center;gap:8px;margin-top:4px}
@@ -799,12 +783,6 @@ body{
   #content{padding:14px 14px 80px;gap:14px;min-width:0;overflow-x:hidden}
   .metrics-row{grid-template-columns:repeat(2,1fr);gap:10px}
   .products-grid{grid-template-columns:1fr}
-  .product-card{padding:16px}
-  .gauge-row{flex-direction:column;align-items:flex-start;gap:12px}
-  .gauge-wrap{width:96px;height:96px}
-  .stock-info{width:100%}
-  .stock-row{gap:8px}
-  .stock-row-val{text-align:right}
   .metric-value{font-size:22px}
   #mobile-nav{display:block}
   .charts-row{grid-template-columns:1fr;min-width:0}
@@ -813,12 +791,38 @@ body{
   .chart-area-sm{height:160px}
   .bottom-row{grid-template-columns:1fr}
   .txn-table th:nth-child(4),.txn-table td:nth-child(4){display:none}
+
+  /* ── PRODUCT CARD mobile fixes ── */
+  .product-card{padding:14px;gap:12px}
+  .product-header{flex-wrap:wrap;gap:6px}
+  .product-identity{min-width:0}
+  .product-name{font-size:14px}
+  .gauge-wrap{width:80px;height:80px;flex-shrink:0}
+  .gauge-wrap svg{width:80px;height:80px}
+  .gauge-pct{font-size:14px}
+  .gauge-sub{font-size:8px}
+  .gauge-row{gap:12px;min-width:0}
+  .stock-info{min-width:0;overflow:hidden}
+  .dash-model-row{gap:5px;flex-wrap:nowrap;overflow:hidden}
+  .dash-model-name{font-size:11px;min-width:0}
+  .dash-model-bar-wrap{width:36px}
+  .dash-model-count{min-width:32px;font-size:10px}
+  .dash-model-badge{font-size:9px;padding:1px 4px}
+  .dash-model-sensor{display:none}
+  .product-actions{flex-wrap:wrap}
 }
 @media(max-width:400px){
   .metrics-row{grid-template-columns:1fr}
-  .gauge-row{flex-direction:column;align-items:flex-start}
   .chart-area{height:140px}
   .chart-area-sm{height:140px}
+
+  /* ── PRODUCT CARD very small screen ── */
+  .gauge-row{flex-direction:column;align-items:stretch;gap:10px}
+  .gauge-wrap{width:70px;height:70px;align-self:center}
+  .gauge-wrap svg{width:70px;height:70px}
+  .stock-info{width:100%}
+  .dash-model-bar-wrap{display:none}
+  .dash-model-badge{display:none}
 }
 
 /* ── CATEGORIES ── */
@@ -1131,13 +1135,15 @@ html.dark .gauge-track{stroke:#1e2a42}
 .theme-toggle:hover{background:var(--bg-hover);color:var(--text-1)}
 
 /* ── DASHBOARD CATEGORY CARD MODEL BREAKDOWN ── */
-.dash-model-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.dash-model-list{display:flex;flex-direction:column;gap:6px;margin-top:4px;min-width:0;overflow:hidden}
 .dash-model-row{
   display:flex;align-items:center;gap:8px;
   padding:6px 8px;
   background:var(--bg-elevated);
   border:1px solid var(--border);
   border-radius:7px;
+  min-width:0;
+  overflow:hidden;
 }
 .dash-model-name{flex:1;font-size:12px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dash-model-bar-wrap{width:56px;height:4px;background:var(--border-md);border-radius:2px;overflow:hidden;flex-shrink:0}
@@ -1366,7 +1372,14 @@ html.dark .gauge-track{stroke:#1e2a42}
             <span class="setting-unit">pcs</span>
           </div>
         </div>
-        <div class="setting-divider">Bond Paper</div>
+        <div class="setting-row">
+          <div class="setting-label">Ballpen — Sale Price</div>
+          <div class="setting-desc">Price displayed and used for revenue calc</div>
+          <div class="setting-controls">
+            <span class="setting-unit">₱</span>
+            <input class="setting-price" type="number" id="s-bp-price" value="5.00" min="0" step="0.25">
+          </div>
+        </div>
         <div class="setting-row">
           <div class="setting-label">Bond Paper — Max Capacity</div>
           <div class="setting-desc">Total slots for bond paper sheets</div>
@@ -1382,31 +1395,11 @@ html.dark .gauge-track{stroke:#1e2a42}
             <span class="setting-unit">sheets</span>
           </div>
         </div>
-
-        <div class="setting-divider">Hardware Price Sync</div>
-
         <div class="setting-row">
-          <div class="setting-label">Hardware Price Sync — Slot 1 (Ballpen 1)</div>
-          <div class="setting-desc">Price pushed to ESP32 for BTN1</div>
+          <div class="setting-label">Bond Paper — Sale Price</div>
           <div class="setting-controls">
             <span class="setting-unit">₱</span>
-            <input class="setting-price" type="number" id="s-hw-1-price" value="5.00" min="0" step="0.25">
-          </div>
-        </div>
-        <div class="setting-row">
-          <div class="setting-label">Hardware Price Sync — Slot 2 (Ballpen 2)</div>
-          <div class="setting-desc">Price pushed to ESP32 for BTN2</div>
-          <div class="setting-controls">
-            <span class="setting-unit">₱</span>
-            <input class="setting-price" type="number" id="s-hw-2-price" value="5.00" min="0" step="0.25">
-          </div>
-        </div>
-        <div class="setting-row">
-          <div class="setting-label">Hardware Price Sync — Slot 3 (Ballpen 3)</div>
-          <div class="setting-desc">Price pushed to ESP32 for BTN3</div>
-          <div class="setting-controls">
-            <span class="setting-unit">₱</span>
-            <input class="setting-price" type="number" id="s-hw-3-price" value="5.00" min="0" step="0.25">
+            <input class="setting-price" type="number" id="s-pp-price" value="2.00" min="0" step="0.25">
           </div>
         </div>
       </div>
@@ -1440,14 +1433,12 @@ html.dark .gauge-track{stroke:#1e2a42}
         <div>
           <div style="font-size:11.5px;color:var(--text-2);margin-bottom:4px;font-weight:500">Database URL</div>
           <input class="fb-input" type="text" id="fb-url-input"
-            placeholder="https://YOUR-PROJECT-default-rtdb.firebaseio.com"
-            value="https://smart-vend-63d7a-default-rtdb.asia-southeast1.firebasedatabase.app">
+            placeholder="https://YOUR-PROJECT-default-rtdb.firebaseio.com">
         </div>
         <div>
           <div style="font-size:11.5px;color:var(--text-2);margin-bottom:4px;font-weight:500">Database Secret / Auth Token</div>
           <input class="fb-input" type="password" id="fb-secret-input"
-            placeholder="Your database secret key"
-            value="Ug5D6c4i7TQvKM4e7Dsg2bA61640rRW35nwRbBBH">
+            placeholder="Your database secret key">
         </div>
       </div>
 
@@ -1458,14 +1449,13 @@ html.dark .gauge-track{stroke:#1e2a42}
       </div>
 
       <div class="fb-note">
-        <b>How to get your credentials:</b><br>
-        1. Go to <code>Firebase Console</code> → Your Project → <code>Realtime Database</code><br>
-        2. Copy the <code>Database URL</code> shown at the top (looks like <code>https://xxx-rtdb.firebaseio.com</code>)<br>
-        3. Go to <code>Project Settings → Service Accounts → Database Secrets</code> → Add a secret and copy it<br>
-        4. Paste both above and click <b>Connect</b><br>
+        <b>Getting the credentials:</b><br>
+        1. Open <code>Firebase Console</code> → your project → <code>Realtime Database</code><br>
+        2. Grab the <code>Database URL</code> at the top — it looks like <code>https://xxx-rtdb.firebaseio.com</code><br>
+        3. Go to <code>Project Settings → Service Accounts → Database Secrets</code>, add a new secret, and copy it<br>
+        4. Paste both fields above and hit <b>Connect</b><br>
         <br>
-        <b>What this does:</b> When you save prices on this page → ESP32 reads them instantly.
-        When ESP32 dispenses a product → this page logs the transaction with the current browser time (no RTC on hardware needed).
+        <b>What it actually does:</b> Any price I update here gets pushed to the ESP32 right away. And whenever the machine dispenses something, the sale gets logged here using the browser's current time — so no RTC module needed on the hardware side.
       </div>
     </div>
 
@@ -1681,12 +1671,6 @@ const state = {
   weeklyRevenue: { ballpen: [], paper: [] }
 };
 
-const hardwareProducts = [
-  { id: 'slot-1', name: 'Ballpen 1', fbKey: 'ballpen1', price: 5.00 },
-  { id: 'slot-2', name: 'Ballpen 2', fbKey: 'ballpen2', price: 5.00 },
-  { id: 'slot-3', name: 'Ballpen 3', fbKey: 'ballpen3', price: 5.00 }
-];
-
 // ═══════════════════════════════════════════════════════
 // SEED DEMO DATA
 // ═══════════════════════════════════════════════════════
@@ -1818,11 +1802,6 @@ function renderDashboardProducts() {
         </div>
       </div>`;
   }).join('');
-}
-
-function renderProduct() {
-  renderDashboardProducts();
-  renderCategories();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2047,11 +2026,10 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 function saveAllSettings() {
   const bpMax = parseInt(document.getElementById('s-bp-max').value);
   const bpThresh = parseInt(document.getElementById('s-bp-threshold').value);
+  const bpPrice = parseFloat(document.getElementById('s-bp-price').value);
   const ppMax = parseInt(document.getElementById('s-pp-max').value);
   const ppThresh = parseInt(document.getElementById('s-pp-threshold').value);
-  const hw1Price = parseFloat(document.getElementById('s-hw-1-price').value);
-  const hw2Price = parseFloat(document.getElementById('s-hw-2-price').value);
-  const hw3Price = parseFloat(document.getElementById('s-hw-3-price').value);
+  const ppPrice = parseFloat(document.getElementById('s-pp-price').value);
 
   if (bpThresh >= bpMax || ppThresh >= ppMax) {
     showToast('warn', 'Threshold must be less than max capacity.');
@@ -2060,11 +2038,10 @@ function saveAllSettings() {
 
   state.ballpen.max = bpMax || state.ballpen.max;
   state.ballpen.threshold = bpThresh || state.ballpen.threshold;
+  state.ballpen.price = isNaN(bpPrice) ? state.ballpen.price : bpPrice;
   state.paper.max = ppMax || state.paper.max;
   state.paper.threshold = ppThresh || state.paper.threshold;
-  hardwareProducts[0].price = isNaN(hw1Price) ? hardwareProducts[0].price : hw1Price;
-  hardwareProducts[1].price = isNaN(hw2Price) ? hardwareProducts[1].price : hw2Price;
-  hardwareProducts[2].price = isNaN(hw3Price) ? hardwareProducts[2].price : hw3Price;
+  state.paper.price = isNaN(ppPrice) ? state.paper.price : ppPrice;
 
   renderProduct('ballpen');
   renderProduct('paper');
@@ -2075,14 +2052,13 @@ function saveAllSettings() {
   // ── Push updated prices to Firebase so ESP32 reads them
   if (fb.connected) {
     fb.put('/config/prices', {
-      ballpen1:  hardwareProducts[0].price,
-      ballpen2:  hardwareProducts[1].price,
-      ballpen3:  hardwareProducts[2].price,
+      ballpen:   state.ballpen.price,
+      bondpaper: state.paper.price,
       updatedAt: new Date().toISOString()
     }).then(ok => {
       if (ok) {
         showToast('ok', `Prices pushed to Firebase → ESP32 will update within 30s`);
-        addNotification('info', `Firebase price sync: ${hardwareProducts[0].name} ₱${hardwareProducts[0].price.toFixed(2)}, ${hardwareProducts[1].name} ₱${hardwareProducts[1].price.toFixed(2)}, ${hardwareProducts[2].name} ₱${hardwareProducts[2].price.toFixed(2)}`);
+        addNotification('info', `Firebase price sync: Ballpen ₱${state.ballpen.price.toFixed(2)}, Bond Paper ₱${state.paper.price.toFixed(2)}`);
       } else {
         showToast('warn', 'Settings saved locally but Firebase sync failed. Check connection.');
       }
@@ -2095,11 +2071,10 @@ function saveAllSettings() {
 function loadSettingsToForm() {
   document.getElementById('s-bp-max').value = state.ballpen.max;
   document.getElementById('s-bp-threshold').value = state.ballpen.threshold;
+  document.getElementById('s-bp-price').value = state.ballpen.price.toFixed(2);
   document.getElementById('s-pp-max').value = state.paper.max;
   document.getElementById('s-pp-threshold').value = state.paper.threshold;
-  document.getElementById('s-hw-1-price').value = hardwareProducts[0].price.toFixed(2);
-  document.getElementById('s-hw-2-price').value = hardwareProducts[1].price.toFixed(2);
-  document.getElementById('s-hw-3-price').value = hardwareProducts[2].price.toFixed(2);
+  document.getElementById('s-pp-price').value = state.paper.price.toFixed(2);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2357,11 +2332,9 @@ async function testFirebaseConnection() {
   const ok = await fb.test(url, secret);
   if (ok) {
     showToast('ok', 'Connection test passed! Click Connect to activate.');
-    addNotification('info', 'Firebase connection test passed.');
     setFbStatus(false, 'Test OK — click Connect');
   } else {
     showToast('danger', 'Connection failed. Check URL and secret.');
-    addNotification('danger', 'Firebase connection test failed.');
     setFbStatus(false, 'Test failed');
   }
 }
@@ -2392,14 +2365,10 @@ async function connectFirebase() {
 
   // Push current prices immediately so ESP32 can pick them up
   await fb.put('/config/prices', {
-    ballpen1:  hardwareProducts[0].price,
-    ballpen2:  hardwareProducts[1].price,
-    ballpen3:  hardwareProducts[2].price,
+    ballpen:   state.ballpen.price,
+    bondpaper: state.paper.price,
     updatedAt: new Date().toISOString()
   });
-
-  // Push current stock snapshot
-  syncStockToFirebase('connect', true);
 
   // Start polling for dispense signals from ESP32
   startDispenseSignalListener();
@@ -2414,7 +2383,6 @@ function disconnectFirebase() {
   localStorage.removeItem('vt-fb-secret');
   setFbStatus(false, 'Disconnected');
   showToast('info', 'Firebase disconnected.');
-  addNotification('info', 'Firebase disconnected.');
 }
 
 // ── Listen for dispense signal from ESP32 ────────────────────
@@ -2427,47 +2395,6 @@ function startDispenseSignalListener() {
   if (fb.pollTimer) clearInterval(fb.pollTimer);
   fb.pollTimer = setInterval(checkDispenseSignal, 3000); // poll every 3 s
   checkDispenseSignal(); // immediate first check
-}
-
-function findModelByFbKey(fbKey) {
-  for (const cat of categories) {
-    const model = cat.models.find(m => m.fbKey === fbKey);
-    if (model) return { cat, model };
-  }
-  return null;
-}
-
-function buildStockPayload() {
-  const categoriesPayload = {};
-  categories.forEach(cat => {
-    const modelsPayload = {};
-    cat.models.forEach(m => {
-      modelsPayload[m.id] = {
-        name: m.name,
-        stock: m.stock,
-        max: m.max,
-        threshold: m.threshold,
-        fbKey: m.fbKey || null
-      };
-    });
-    categoriesPayload[cat.id] = {
-      name: cat.name,
-      models: modelsPayload
-    };
-  });
-  return {
-    updatedAt: new Date().toISOString(),
-    categories: categoriesPayload
-  };
-}
-
-function syncStockToFirebase(context, silent) {
-  if (!fb.connected) return;
-  fb.put('/stock/models', buildStockPayload()).then(ok => {
-    if (!ok && !silent) {
-      showToast('warn', `Stock sync failed (${context}). Check Firebase connection.`);
-    }
-  });
 }
 
 async function checkDispenseSignal() {
@@ -2493,11 +2420,7 @@ async function checkDispenseSignal() {
     const fbKey     = signal.fbKey || (product === 'Ballpen' ? 'ballpen' : 'bondpaper');
 
     // ── Update local state revenue/sold counters
-    const matched = findModelByFbKey(fbKey);
-    if (matched) {
-      matched.model.stock = Math.max(0, matched.model.stock - qty);
-      state.ballpen.soldToday += qty;
-    } else if (fbKey === 'ballpen') {
+    if (fbKey === 'ballpen') {
       state.ballpen.soldToday += qty;
       state.ballpen.stock = Math.max(0, state.ballpen.stock - qty);
     } else if (fbKey === 'bondpaper') {
@@ -2530,7 +2453,10 @@ async function checkDispenseSignal() {
     await fb.put('/dispense_signal', { triggered: false });
 
     // ── Also push updated stock to Firebase
-    syncStockToFirebase('hardware sale', true);
+    await fb.put('/stock', {
+      ballpen:   state.ballpen.stock,
+      bondpaper: state.paper.stock
+    });
 
   } catch(e) {
     // Network blip — silently skip, will retry in 3 s
@@ -2542,14 +2468,14 @@ async function checkDispenseSignal() {
 function tryRestoreFbConnection() {
   const savedUrl    = localStorage.getItem('vt-fb-url');
   const savedSecret = localStorage.getItem('vt-fb-secret');
-
-  // Use saved credentials, or fall back to the pre-filled defaults
-  const url    = savedUrl    || 'https://smart-vend-63d7a-default-rtdb.asia-southeast1.firebasedatabase.app';
-  const secret = savedSecret || 'Ug5D6c4i7TQvKM4e7Dsg2bA61640rRW35nwRbBBH';
-
-  document.getElementById('fb-url-input').value    = url;
-  document.getElementById('fb-secret-input').value = secret;
-  connectFirebase();
+  if (savedUrl && savedSecret) {
+    document.getElementById('fb-url-input').value    = savedUrl;
+    document.getElementById('fb-secret-input').value = savedSecret;
+    // Silently reconnect
+    connectFirebase();
+  } else {
+    setFbStatus(false, 'Not connected — enter credentials above');
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2588,16 +2514,16 @@ function init() {
 // CATEGORIES & MODELS  (each model has its own inventory)
 // ═══════════════════════════════════════════════════════
 function makeModel(name, stock, max, threshold) {
-  return { id: 'mdl-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), name, stock: stock||0, max: max||20, threshold: threshold||5, sensorConnected: false, fbKey: null };
+  return { id: 'mdl-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), name, stock: stock||0, max: max||20, threshold: threshold||5, sensorConnected: false };
 }
 
 let categories = [
   {
     id: 'cat-1', name: 'Ballpen',
     models: [
-      { id:'mdl-101', name:'Ballpen 1',  stock:14, max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen1' },
-      { id:'mdl-102', name:'Ballpen 2',  stock:3,  max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen2' },
-      { id:'mdl-103', name:'Ballpen 3',  stock:20, max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen3' }
+      { id:'mdl-101', name:'Standard Black',  stock:14, max:20, threshold:5,  sensorConnected:false },
+      { id:'mdl-102', name:'Standard Blue',   stock:3,  max:20, threshold:5,  sensorConnected:false },
+      { id:'mdl-103', name:'Standard Red',    stock:20, max:20, threshold:5,  sensorConnected:false }
     ]
   },
   {
@@ -2727,8 +2653,6 @@ function addCategory() {
   renderCategories();
   renderDashboardProducts();
   showToast('ok', `Category "${name}" added!`);
-  addNotification('ok', `Category added: ${name}`);
-  syncStockToFirebase('add category');
 }
 
 function deleteCategory(catId) {
@@ -2739,8 +2663,6 @@ function deleteCategory(catId) {
   renderCategories();
   renderDashboardProducts();
   showToast('ok', `Category "${cat.name}" deleted.`);
-  addNotification('info', `Category deleted: ${cat.name}`);
-  syncStockToFirebase('delete category');
 }
 
 let _editCatSaved = false;
@@ -2759,9 +2681,8 @@ function saveEditCategory(catId, value) {
   if (_editCatSaved) return; _editCatSaved = true;
   const n = (value||'').trim(); if(!n){renderCategories();return;}
   const cat = categories.find(c=>c.id===catId);
-  if(cat){cat.name=n; showToast('ok',`Category renamed to "${n}".`); addNotification('info', `Category renamed to ${n}`);}
+  if(cat){cat.name=n; showToast('ok',`Category renamed to "${n}".`);}
   renderCategories();
-  syncStockToFirebase('rename category');
 }
 
 /* ── model CRUD ── */
@@ -2779,8 +2700,6 @@ function addModel(catId) {
   renderCategories();
   renderDashboardProducts();
   showToast('ok',`Model "${name}" added to ${cat.name}.`);
-  addNotification('ok', `Model added: ${cat.name} › ${name}`);
-  syncStockToFirebase('add model');
 }
 
 function deleteModel(catId, modelId) {
@@ -2792,8 +2711,6 @@ function deleteModel(catId, modelId) {
   renderCategories();
   renderDashboardProducts();
   showToast('ok',`Model "${m.name}" removed.`);
-  addNotification('info', `Model removed: ${cat.name} › ${m.name}`);
-  syncStockToFirebase('delete model');
 }
 
 let _editModelSaved = false;
@@ -2817,9 +2734,8 @@ function saveEditModel(catId, modelId, value) {
   const n = (value||'').trim(); if(!n){renderCategories();return;}
   const cat = categories.find(c=>c.id===catId);
   const m = cat && cat.models.find(m=>m.id===modelId);
-  if(m){ m.name=n; showToast('ok',`Model renamed to "${n}".`); addNotification('info', `Model renamed to ${cat.name} › ${n}`); }
+  if(m){ m.name=n; showToast('ok',`Model renamed to "${n}".`); }
   renderCategories();
-  syncStockToFirebase('rename model');
 }
 
 /* ── model restock modal ── */
@@ -2846,12 +2762,10 @@ function confirmModelRestock() {
   const prev = m.stock;
   m.stock = Math.min(m.stock+add, m.max);
   showToast('ok',`${m.name} restocked by ${m.stock-prev}. Now: ${m.stock}/${m.max}`);
-  addNotification('ok', `${cat.name} › ${m.name} restocked by ${m.stock-prev}. New stock: ${m.stock}/${m.max}`);
   closeModal('model-restock-modal');
   renderCategories();
   renderDashboardProducts();
   renderMetrics();
-  syncStockToFirebase('restock model');
 }
 document.getElementById('mr-qty') && document.getElementById('mr-qty').addEventListener('input', function(){
   const cat = categories.find(c=>c.id===_activeModelCatId);
@@ -2887,12 +2801,10 @@ function confirmModelConfig() {
   m.stock = Math.min(isNaN(stock)?m.stock:Math.max(0,stock), max);
   m.max = max; m.threshold = thr; m.sensorConnected = sensor;
   showToast('ok',`${m.name} settings saved.`);
-  addNotification('info', `Model settings saved: ${cat.name} › ${m.name}`);
   closeModal('model-config-modal');
   renderCategories();
   renderDashboardProducts();
   renderMetrics();
-  syncStockToFirebase('model config');
 }
 
 // ═══════════════════════════════════════════════════════

@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "SmartVend",
+			"path": "../../../../Documents/PlatformIO/Projects/SmartVend"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "VendoTrack"
+	}
+}
