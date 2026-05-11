@@ -1543,6 +1543,13 @@ html.dark .gauge-track{stroke:#1e2a42}
         <button class="btn-fb-connect" style="background:var(--success)" onclick="testFirebaseConnection()">Test Connection</button>
       </div>
 
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugViewFirebaseData()">📊 View Firebase Data</button>
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugPushLocalToFirebase()">⬆️ Push Local to Firebase</button>
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugPullFromFirebase()">⬇️ Pull from Firebase</button>
+        <button class="btn-outline btn-sm" style="background:var(--danger-bg);color:var(--danger);font-size:11px" onclick="debugResetFirebaseData()">🔄 Reset Firebase to Current</button>
+      </div>
+
       <div class="fb-note">
         <b>How to get your credentials:</b><br>
         1. Go to <code>Firebase Console</code> → Your Project → <code>Realtime Database</code><br>
@@ -2612,8 +2619,8 @@ async function connectFirebase() {
   localStorage.setItem('vt-fb-secret', secret);
 
   setFbStatus(true, 'Connected to Firebase');
-  showToast('ok', 'Firebase connected! Hardware sync is now active.');
-  addNotification('ok', 'Firebase connected — hardware price sync active.');
+  showToast('ok', 'Firebase connected! Syncing data...');
+  addNotification('ok', 'Firebase connected — syncing...');
 
   // Push current prices immediately so ESP32 can pick them up
   await fb.put('/config/prices', {
@@ -2623,8 +2630,11 @@ async function connectFirebase() {
     updatedAt: new Date().toISOString()
   });
 
-  // Push current stock snapshot
-  syncStockToFirebase('connect', true);
+  // Push current stock snapshot — show feedback this time
+  const syncOk = await syncStockToFirebase('connect', false);
+  if (syncOk) {
+    showToast('ok', '✓ Data synced to Firebase');
+  }
 
   // Pull latest stock from Firebase to refresh UI
   startStockSyncListener();
@@ -2646,6 +2656,50 @@ function disconnectFirebase() {
   addNotification('info', 'Firebase disconnected.');
 }
 
+// ── DEBUG FUNCTIONS (for diagnosing sync issues) ────────────────
+async function debugViewFirebaseData() {
+  if (!fb.connected) { showToast('warn', 'Not connected to Firebase'); return; }
+  try {
+    const data = await fb.get('/stock/models');
+    console.log('📊 Firebase Stock Data:', data);
+    showToast('ok', 'Firebase data logged to console (press F12)');
+    alert('Firebase Data:\n\n' + JSON.stringify(data, null, 2).slice(0, 500) + '...\n\nSee console for full data (F12)');
+  } catch(e) {
+    showToast('danger', 'Failed to read Firebase: ' + e.message);
+  }
+}
+
+async function debugPullFromFirebase() {
+  if (!fb.connected) { showToast('warn', 'Not connected to Firebase'); return; }
+  showToast('info', 'Pulling latest data from Firebase...');
+  await pullStockFromFirebase();
+  showToast('ok', 'Data pulled from Firebase');
+}
+
+async function debugPushLocalToFirebase() {
+  if (!fb.connected) { showToast('warn', 'Not connected to Firebase'); return; }
+  showToast('info', 'Pushing current local data to Firebase...');
+  const ok = await syncStockToFirebase('manual push', false);
+  if (ok) {
+    showToast('ok', '✓ Data pushed to Firebase successfully!');
+  } else {
+    showToast('danger', '✗ Push failed. Check Firebase connection.');
+  }
+}
+
+async function debugResetFirebaseData() {
+  if (!fb.connected) { showToast('warn', 'Not connected to Firebase'); return; }
+  if (!confirm('⚠️ This will overwrite Firebase data with your current local data.\n\nContinue?')) return;
+  showToast('info', 'Resetting Firebase to match local data...');
+  const ok = await syncStockToFirebase('manual reset', false);
+  if (ok) {
+    showToast('ok', '✓ Firebase reset successfully!');
+    addNotification('ok', 'Firebase data reset to current local data');
+  } else {
+    showToast('danger', '✗ Reset failed. Check Firebase connection.');
+  }
+}
+
 // ── Listen for dispense signal from ESP32 ────────────────────
 // ESP32 sets /dispense_signal.triggered = true when it vends.
 // Website reads it, logs the transaction with JS Date() (no RTC needed),
@@ -2660,11 +2714,10 @@ function startDispenseSignalListener() {
 
 function startStockSyncListener() {
   if (fb.stockTimer) clearInterval(fb.stockTimer);
-  // Push local data to Firebase immediately on startup
-  syncStockToFirebase('connection established', true);
-  // Then periodically check if other devices made changes (30 second interval)
-  // This won't overwrite local data unless Firebase data is actually different
-  fb.stockTimer = setInterval(pullStockFromFirebase, 30000);
+  // Don't auto-pull — this overwrites local data!
+  // Use manual sync buttons instead to prevent data loss
+  // User can click "Pull from Firebase" if they want to check for updates from other devices
+  console.log('[Sync] Auto-pull disabled to prevent data overwrites. Use manual sync buttons.');
 }
 
 function findModelByFbKey(fbKey) {
@@ -2693,18 +2746,36 @@ function buildStockPayload() {
       models: modelsPayload
     };
   });
-  return {
+  const payload = {
     updatedAt: new Date().toISOString(),
     categories: categoriesPayload
   };
+  console.log('[buildStockPayload] Payload to send to Firebase:', payload);
+  return payload;
 }
 
 function syncStockToFirebase(context, silent) {
-  if (!fb.connected) return;
-  fb.put('/stock/models', buildStockPayload()).then(ok => {
+  if (!fb.connected) {
+    console.warn('[syncStockToFirebase] Not connected to Firebase');
+    return Promise.resolve(false);
+  }
+  console.log(`[syncStockToFirebase] Syncing (${context})...`);
+  return fb.put('/stock/models', buildStockPayload()).then(ok => {
+    if (ok) {
+      console.log(`[syncStockToFirebase] ✓ Sync successful (${context})`);
+    } else {
+      console.error(`[syncStockToFirebase] ✗ Sync failed (${context})`);
+    }
     if (!ok && !silent) {
       showToast('warn', `Stock sync failed (${context}). Check Firebase connection.`);
     }
+    return ok;
+  }).catch(err => {
+    console.error(`[syncStockToFirebase] Error (${context}):`, err);
+    if (!silent) {
+      showToast('warn', `Stock sync error (${context}): ${err.message}`);
+    }
+    return false;
   });
 }
 
