@@ -31,7 +31,6 @@ const char* WIFI_PASSWORD = "143143143";
 const char* FIREBASE_DB   = "https://smart-vend-63d7a-default-rtdb.asia-southeast1.firebasedatabase.app";
 // Firebase Console → Project Settings → Service Accounts → Database Secrets
 const char* FIREBASE_AUTH = "Ug5D6c4i7TQvKM4e7Dsg2bA61640rRW35nwRbBBH";
-const char* FIREBASE_HOST = "smart-vend-63d7a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
 // Allan coin acceptor: 1 pulse per coin = P1
 const float PESOS_PER_PULSE = 1.0;
@@ -52,14 +51,14 @@ const float PESOS_PER_PULSE = 1.0;
 
 #define BTN1    32    // INPUT_PULLUP — press = LOW
 #define BTN2    33    // INPUT_PULLUP — press = LOW
-#define BTN3    12    // INPUT_PULLUP — press = LOW
-#define BTN4    27    // INPUT_PULLUP — press = LOW
+#define BTN3    34    // input-only — needs external 10k pull-down, press = HIGH
+#define BTN4    35    // input-only — needs external 10k pull-down, press = HIGH
 
 #define SDA_PIN 25
 #define SCL_PIN 26
 
-#define COIN_PIN  13  // Allan COUNTER pin → GPIO 14 (per user)
-#define LIMIT_PIN 14  // Reserved (not used)
+#define COIN_PIN  13  // Allan COUNTER pin → GPIO 13
+#define LIMIT_PIN 14  // Reserved
 
 #define SERVO_PIN 2
 
@@ -109,9 +108,6 @@ const unsigned long    COIN_SETTLE_MS = 150;
 
 // ── BUTTON DEBOUNCE ───────────────────────────────────────
 unsigned long btnTime[4] = {0, 0, 0, 0};
-bool lastBtnReading[4] = {HIGH, HIGH, HIGH, HIGH};
-bool debouncedBtnState[4] = {HIGH, HIGH, HIGH, HIGH};
-bool btnLatched[4] = {false, false, false, false};
 const unsigned long BTN_DEBOUNCE_MS = 220;
 
 // ── FIREBASE ──────────────────────────────────────────────
@@ -121,12 +117,6 @@ const unsigned long PRICE_POLL_MS = 30000;
 // ── LCD REFRESH ───────────────────────────────────────────
 unsigned long lastLCDRefresh = 0;
 const unsigned long LCD_REFRESH_MS = 600;
-
-// ── BUTTON DIAGNOSTICS ────────────────────────────────────
-unsigned long lastButtonDiag = 0;
-const unsigned long BUTTON_DIAG_MS = 1000;
-bool lastDiagBtn3 = HIGH;
-bool lastDiagBtn4 = HIGH;
 
 // ── WIFI ──────────────────────────────────────────────────
 bool wifiConnected = false;
@@ -182,8 +172,8 @@ void setup() {
   // Buttons
   pinMode(BTN1, INPUT_PULLUP);
   pinMode(BTN2, INPUT_PULLUP);
-  pinMode(BTN3, INPUT_PULLUP);
-  pinMode(BTN4, INPUT_PULLUP);
+  pinMode(BTN3, INPUT);
+  pinMode(BTN4, INPUT);
 
   // Coin acceptor — COUNTER pin is open-collector
   // Idles HIGH, pulls LOW per coin → FALLING edge
@@ -201,11 +191,9 @@ void setup() {
 
   // WiFi + Firebase
   connectWiFi();
-  bool pricesOk = false;
   if (wifiConnected) {
     lcdLine("Fetching prices", "from Firebase...");
-    pricesOk = fetchPricesFromFirebase();
-    if (pricesOk) {
+    if (fetchPricesFromFirebase()) {
       lcdLine("Prices loaded!", "Ready to vend!");
     } else {
       lcdLine("Using defaults", "No Firebase yet");
@@ -213,9 +201,6 @@ void setup() {
     delay(1200);
     resetDispenseSignal();
   }
-
-  // report boot outcome to DB (helps debug when serial is unavailable)
-  reportBootStatus(pricesOk);
 
   vendoState = IDLE;
   updateLCD();
@@ -237,19 +222,6 @@ void loop() {
   if (millis() - lastLCDRefresh > LCD_REFRESH_MS) {
     updateLCD();
     lastLCDRefresh = millis();
-  }
-
-  if (millis() - lastButtonDiag > BUTTON_DIAG_MS) {
-    bool rawBtn3 = digitalRead(BTN3);
-    bool rawBtn4 = digitalRead(BTN4);
-    if (rawBtn3 != lastDiagBtn3 || rawBtn4 != lastDiagBtn4) {
-      Serial.printf("[Buttons] BTN3=%s BTN4=%s\n",
-                    rawBtn3 == LOW ? "LOW" : "HIGH",
-                    rawBtn4 == LOW ? "LOW" : "HIGH");
-      lastDiagBtn3 = rawBtn3;
-      lastDiagBtn4 = rawBtn4;
-    }
-    lastButtonDiag = millis();
   }
 
   if (!wifiConnected && millis() % 30000 < 100) {
@@ -281,7 +253,15 @@ void processCoins() {
 
   if (vendoState == IDLE) vendoState = INSERTING;
 
-  Serial.printf("[Coin] pulses=%d -> +P%.2f | Total: P%.2f\n", pulses, coinValue, insertedAmount);
+  Serial.printf("[Coin] +P%.2f | Total: P%.2f\n", coinValue, insertedAmount);
+
+  // Auto-dispense if product already selected and now have enough
+  if (vendoState == SELECTED && selectedProduct >= 0) {
+    if (insertedAmount >= products[selectedProduct].price) {
+      tryDispense(selectedProduct);
+      return;
+    }
+  }
 
   updateLCD();
 }
@@ -290,29 +270,14 @@ void processCoins() {
 //  BUTTONS
 // ═══════════════════════════════════════════════════════════
 bool btnPressed(int pin, int idx) {
-  bool reading = digitalRead(pin);
+  bool active = (pin == BTN3 || pin == BTN4)
+                ? (digitalRead(pin) == HIGH)
+                : (digitalRead(pin) == LOW);
 
-  if (reading != lastBtnReading[idx]) {
+  if (active && millis() - btnTime[idx] > BTN_DEBOUNCE_MS) {
     btnTime[idx] = millis();
-    lastBtnReading[idx] = reading;
+    return true;
   }
-
-  if ((millis() - btnTime[idx]) < BTN_DEBOUNCE_MS) {
-    return false;
-  }
-
-  if (reading != debouncedBtnState[idx]) {
-    debouncedBtnState[idx] = reading;
-    if (debouncedBtnState[idx] == LOW && !btnLatched[idx]) {
-      btnLatched[idx] = true;
-      return true;
-    }
-
-    if (debouncedBtnState[idx] == HIGH) {
-      btnLatched[idx] = false;
-    }
-  }
-
   return false;
 }
 
@@ -338,23 +303,17 @@ void selectProduct(int idx) {
     return;
   }
 
-  float price = products[idx].price;
-  if (insertedAmount < price) {
-    Serial.printf("[Select] %s | Not enough | Inserted: P%.2f / P%.2f\n",
-                  products[idx].name, insertedAmount, price);
-    lcdLine("Not enough", "Insert more coin");
-    delay(1200);
-    updateLCD();
-    return;
-  }
-
   selectedProduct = idx;
   vendoState = SELECTED;
 
   Serial.printf("[Select] %s P%.2f | Inserted: P%.2f\n",
-                products[idx].name, price, insertedAmount);
+                products[idx].name, products[idx].price, insertedAmount);
 
-  tryDispense(idx);
+  if (insertedAmount >= products[idx].price) {
+    tryDispense(idx);
+  } else {
+    updateLCD();
+  }
 }
 
 void tryDispense(int idx) {
@@ -365,7 +324,7 @@ void tryDispense(int idx) {
 
   float price  = products[idx].price;
   vendoState   = DISPENSING;
-  changeAmount = 0.0f;
+  changeAmount = insertedAmount - price;
 
   Serial.printf("[Dispense] %s | Price:P%.2f | Change:P%.2f\n",
                 products[idx].name, price, changeAmount);
@@ -380,7 +339,14 @@ void tryDispense(int idx) {
     Serial.printf("[Firebase] Signal: %s\n", ok ? "OK" : "FAILED");
   }
 
-  lcdLine("Thank you!      ", "Enjoy!          ");
+  char line1[17], line2[17];
+  snprintf(line1, 17, "Thank you!      ");
+  if (changeAmount > 0.005f) {
+    snprintf(line2, 17, "Change: P%.2f   ", changeAmount);
+  } else {
+    snprintf(line2, 17, "Enjoy!          ");
+  }
+  lcdLine(line1, line2);
 
   delay(3500);
 
@@ -497,69 +463,33 @@ void updateLCD() {
 //  FIREBASE REST API
 // ═══════════════════════════════════════════════════════════
 String firebaseGET(const String& path) {
-  if (!wifiConnected) {
-    Serial.println(F("[Firebase GET] Skipped — WiFi not connected"));
-    return "";
-  }
-
-  const int MAX_ATTEMPTS = 3;
-  int attempt = 0;
-  String resp = "";
+  if (!wifiConnected) return "";
+  HTTPClient http;
   String url = String(FIREBASE_DB) + path + ".json?auth=" + String(FIREBASE_AUTH);
-  while (attempt < MAX_ATTEMPTS) {
-    attempt++;
-    Serial.printf("[Firebase GET] Attempt %d URL: %s\n", attempt, url.c_str());
-    HTTPClient http;
-    http.begin(url);
-    http.setTimeout(10000);
-    int code = http.GET();
-    if (code > 0) {
-      resp = http.getString();
-      Serial.printf("[Firebase GET] HTTP %d | len=%d\n", code, resp.length());
-      http.end();
-      if (code == 200) return resp;
-      if (resp.length() > 0) Serial.printf("[Firebase GET] Body: %s\n", resp.c_str());
-    } else {
-      Serial.printf("[Firebase GET] Failed to connect, code=%d\n", code);
-      http.end();
-    }
-    // exponential backoff
-    unsigned long waitMs = 200 * (1 << (attempt - 1));
-    delay(waitMs);
-  }
-  return "";
+  http.begin(url);
+  http.setTimeout(6000);
+  int code = http.GET();
+  String resp = (code == 200) ? http.getString() : "";
+  http.end();
+  if (code != 200) Serial.printf("[Firebase GET] HTTP %d\n", code);
+  return resp;
 }
 
 bool firebasePUT(const String& path, const String& body) {
-  if (!wifiConnected) {
-    Serial.println(F("[Firebase PUT] Skipped — WiFi not connected"));
-    return false;
-  }
-
-  const int MAX_ATTEMPTS = 3;
-  int attempt = 0;
+  if (!wifiConnected) return false;
+  HTTPClient http;
   String url = String(FIREBASE_DB) + path + ".json?auth=" + String(FIREBASE_AUTH);
-  while (attempt < MAX_ATTEMPTS) {
-    attempt++;
-    Serial.printf("[Firebase PUT] Attempt %d URL: %s\n", attempt, url.c_str());
-    HTTPClient http;
-    http.begin(url);
-    http.addHeader("Content-Type", "application/json");
-    http.setTimeout(10000);
-    int code = http.PUT(body);
-    Serial.printf("[Firebase PUT] HTTP %d | BodyLen=%d\n", code, body.length());
-    http.end();
-    if (code == 200) return true;
-    // exponential backoff
-    unsigned long waitMs = 200 * (1 << (attempt - 1));
-    delay(waitMs);
-  }
-  return false;
+  http.begin(url);
+  http.addHeader("Content-Type", "application/json");
+  http.setTimeout(6000);
+  int code = http.PUT(body);
+  http.end();
+  if (code != 200) Serial.printf("[Firebase PUT] HTTP %d\n", code);
+  return (code == 200);
 }
 
 bool fetchPricesFromFirebase() {
   String resp = firebaseGET("/config/prices");
-  Serial.printf("[fetchPrices] raw response len=%d\n", resp.length());
   if (resp.isEmpty() || resp == "null") return false;
 
   StaticJsonDocument<512> doc;
@@ -606,20 +536,6 @@ bool resetDispenseSignal() {
   return firebasePUT("/dispense_signal", "{\"triggered\":false}");
 }
 
-// Write a small boot status to Firebase so we can debug without serial
-void reportBootStatus(bool pricesOk) {
-  if (!wifiConnected) return;
-  StaticJsonDocument<256> doc;
-  doc["wifiConnected"] = wifiConnected;
-  doc["pricesLoaded"]  = pricesOk;
-  doc["ip"]            = WiFi.localIP().toString();
-  doc["rssi"]          = WiFi.RSSI();
-  doc["timestamp"]     = millis();
-  String body;
-  serializeJson(doc, body);
-  firebasePUT("/debug/last_boot", body);
-}
-
 // ═══════════════════════════════════════════════════════════
 //  WIFI
 // ═══════════════════════════════════════════════════════════
@@ -629,59 +545,24 @@ void connectWiFi() {
   Serial.println(F("[WiFi] Starting auto-connect"));
 
   WiFi.mode(WIFI_STA);
-  WiFi.disconnect(true, true);
-  delay(250);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFiManager wm;
+  wm.setConfigPortalTimeout(180); // seconds
+  wm.setConnectTimeout(20);
 
-  const unsigned long startMs = millis();
-  while (WiFi.status() != WL_CONNECTED && (millis() - startMs) < 15000) {
-    delay(500);
-    Serial.print('.');
-  }
-  Serial.println();
+  // Try saved WiFi first, otherwise start AP portal
+  const bool ok = wm.autoConnect("VendoTrack-Setup", "vendotrack");
 
-  if (WiFi.status() == WL_CONNECTED) {
+  if (ok && WiFi.status() == WL_CONNECTED) {
     wifiConnected = true;
     Serial.printf("[WiFi] Connected — IP: %s\n", WiFi.localIP().toString().c_str());
-    Serial.printf("[WiFi] RSSI: %d dBm\n", WiFi.RSSI());
-      Serial.printf("[Net] Gateway: %s  Subnet: %s\n",
-                    WiFi.gatewayIP().toString().c_str(), WiFi.subnetMask().toString().c_str());
-
-      // Force DNS to a reliable public resolver (helps flaky router DNS)
-      IPAddress dns1(8,8,8,8);
-      if (WiFi.config(WiFi.localIP(), WiFi.gatewayIP(), WiFi.subnetMask(), dns1)) {
-        Serial.println(F("[Net] DNS forced to 8.8.8.8"));
-      } else {
-        Serial.println(F("[Net] DNS force failed"));
-      }
-
-      // DNS / reachability quick test
-      IPAddress resolved;
-      Serial.printf("[Net] Testing DNS for %s\n", FIREBASE_HOST);
-      if (WiFi.hostByName(FIREBASE_HOST, resolved)) {
-        Serial.printf("[Net] DNS OK -> %s\n", resolved.toString().c_str());
-      } else {
-        Serial.println(F("[Net] DNS lookup FAILED"));
-      }
-      // quick TCP handshake test (connect to 443) to see whether host is reachable
-      WiFiClient client;
-      Serial.printf("[Net] Testing TCP connect to %s:443\n", FIREBASE_HOST);
-      if (client.connect(FIREBASE_HOST, 443)) {
-        Serial.println(F("[Net] TCP connect OK (port 443)"));
-        client.stop();
-      } else {
-        Serial.println(F("[Net] TCP connect FAILED (port 443)"));
-      }
+    lcdLine("WiFi Connected! ", WiFi.localIP().toString().c_str());
+    delay(1200);
   } else {
     wifiConnected = false;
-      Serial.println(F("[WiFi] Failed — continuing without WiFi"));
-      lcdLine("WiFi offline", "Running local");
-      delay(1200);
+    Serial.println(F("[WiFi] Failed — AP portal timed out"));
+    lcdLine("WiFi Setup AP ", "SSID: VendoTrack");
+    delay(1500);
   }
-    if (wifiConnected) {
-      lcdLine("WiFi Connected! ", WiFi.localIP().toString().c_str());
-      delay(1200);
-    }
   vendoState = IDLE;
 }
 
@@ -705,8 +586,9 @@ void connectWiFi() {
   BUTTONS:
     BTN1 (GPIO 32): → GPIO 32 and → GND         (INPUT_PULLUP)
     BTN2 (GPIO 33): same as BTN1
-    BTN3 (GPIO 12): → GPIO 12 and → GND         (INPUT_PULLUP)
-    BTN4 (GPIO 27): → GPIO 27 and → GND         (INPUT_PULLUP)
+    BTN3 (GPIO 34): → GPIO 34 and → 3.3V
+                    + 10kΩ resistor between GPIO 34 and GND
+    BTN4 (GPIO 35): same as BTN3
 
   STEPPER DRIVERS (DRV8825 / A4988):
     STEP → PUL pins: 23 / 19 / 17

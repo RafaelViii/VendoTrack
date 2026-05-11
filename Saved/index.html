@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VendoTrack — Ballpen Vendo Monitor</title>
+<title>VendoTrack — Vendo Monitor</title>
 
 <!-- ═══════════════════════════════════════════════════════════
      FIREBASE SDK — Active (REST API mode via fetch, no SDK needed)
@@ -744,104 +744,6 @@ body{
   color:#fff;cursor:pointer;font-size:13px;font-weight:500;font-family:var(--font-ui);
 }
 
-/* ── FEATURE UNAVAILABLE MODAL ── */
-.fna-modal{
-  background:var(--bg-card);
-  border:1px solid var(--border-md);
-  border-radius:var(--r-lg);
-  padding:28px 24px 22px;
-  width:100%;
-  max-width:420px;
-  animation:modal-in .2s ease;
-  text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-}
-.fna-icon-wrap{
-  width:56px;height:56px;
-  border-radius:16px;
-  background:rgba(217,119,6,0.12);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--warning);
-  border:1px solid rgba(217,119,6,0.25);
-}
-.fna-title{
-  font-family:var(--font-display);
-  font-size:17px;
-  font-weight:700;
-  color:var(--text-1);
-  letter-spacing:-.2px;
-  margin-top:2px;
-}
-.fna-badge{
-  font-size:10px;
-  font-family:var(--font-mono);
-  text-transform:uppercase;
-  letter-spacing:.8px;
-  color:var(--warning);
-  background:rgba(217,119,6,0.1);
-  border:1px solid rgba(217,119,6,0.2);
-  padding:3px 10px;
-  border-radius:20px;
-}
-.fna-desc{
-  font-size:13.5px;
-  color:var(--text-2);
-  line-height:1.65;
-  max-width:330px;
-}
-.fna-note{
-  font-size:11.5px;
-  color:var(--text-3);
-  line-height:1.6;
-  background:var(--bg-elevated);
-  border-radius:8px;
-  padding:10px 14px;
-  text-align:left;
-  width:100%;
-  border:1px solid var(--border);
-}
-.fna-note b{color:var(--text-2)}
-.btn-fna-close{
-  padding:9px 24px;
-  border-radius:8px;
-  background:var(--bg-elevated);
-  border:1px solid var(--border-md);
-  color:var(--text-2);
-  cursor:pointer;
-  font-size:13px;
-  font-weight:500;
-  font-family:var(--font-ui);
-  transition:all .15s;
-  margin-top:4px;
-}
-.btn-fna-close:hover{background:var(--bg-hover);color:var(--text-1)}
-
-/* ── MONTHLY SALES TABLE ── */
-.monthly-table-card{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px 20px;
-  display:flex;flex-direction:column;gap:14px;
-  grid-column:1/-1;
-}
-.monthly-table{width:100%;border-collapse:collapse;font-size:13px;}
-.monthly-table th{
-  text-align:left;font-size:10.5px;font-family:var(--font-mono);
-  color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;
-  padding:0 12px 10px;border-bottom:1px solid var(--border);font-weight:400;
-}
-.monthly-table td{
-  padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;
-}
-.monthly-table tr:last-child td{border-bottom:none}
-.monthly-table tr:hover td{background:var(--bg-hover)}
-.month-cell-future{color:var(--text-3);font-size:11.5px;font-style:italic}
-.month-badge-current{
-  display:inline-block;padding:2px 8px;border-radius:20px;
-  font-size:10px;font-family:var(--font-mono);
-  background:var(--accent-glow);color:var(--accent);
-  border:1px solid rgba(59,130,246,.2);margin-left:6px;
-}
-
 /* ── TOAST ── */
 .toast-container{
   position:fixed;
@@ -1286,10 +1188,6 @@ html.dark .gauge-track{stroke:#1e2a42}
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10"/><circle cx="17" cy="17" r="3"/><path d="M17 15v2l1 1"/></svg>
     Categories
   </a>
-  <a class="nav-item" onclick="setPage('analytics')">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-    Monthly Sales
-  </a>
   <a class="nav-item" onclick="setPage('transactions')">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
     Transactions
@@ -1360,17 +1258,20 @@ html.dark .gauge-track{stroke:#1e2a42}
         </div>
       </div>
 
-      <div class="metric-card warning-card" id="m-offline-card">
+      <div class="metric-card success-card">
         <div class="metric-top">
           <div>
-            <div class="metric-label">Offline Sales</div>
-            <div class="metric-value" id="m-offline">0</div>
+            <div class="metric-label">Today's Profit</div>
+            <div class="metric-value" id="m-profit">₱0.00</div>
           </div>
-          <div class="metric-icon" style="background:var(--warning-bg);color:var(--warning)">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
+          <div class="metric-icon" style="background:var(--success-bg);color:var(--success)">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </div>
         </div>
-        <div class="metric-sub" id="m-offline-sub">Pending sync when reconnected</div>
+        <div class="metric-change up" id="m-profit-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+          <span>+8% profit margin</span>
+        </div>
       </div>
 
       <div class="metric-card">
@@ -1383,7 +1284,7 @@ html.dark .gauge-track{stroke:#1e2a42}
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           </div>
         </div>
-        <div class="metric-sub" id="m-units-sub">Hopper 1: 0 · Hopper 2: 0 · Hopper 3: 0</div>
+        <div class="metric-sub" id="m-units-sub">Ballpens: 0 · Bond Paper: 0</div>
       </div>
 
       <div class="metric-card" id="m-alert-card">
@@ -1421,13 +1322,12 @@ html.dark .gauge-track{stroke:#1e2a42}
             <div class="chart-hint">Today · Hourly breakdown</div>
           </div>
           <div class="chart-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Hopper 1</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div>Hopper 2</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>Hopper 3</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Ballpen</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div>Bond Paper</div>
           </div>
         </div>
         <div class="chart-area">
-          <canvas id="salesChart" role="img" aria-label="Hourly sales chart for Ballpen Hoppers 1, 2 and 3 today">Sales data loading...</canvas>
+          <canvas id="salesChart" role="img" aria-label="Hourly sales chart for Ballpen and Bond Paper today">Sales data loading...</canvas>
         </div>
       </div>
 
@@ -1450,22 +1350,36 @@ html.dark .gauge-track{stroke:#1e2a42}
           <button class="btn-save" onclick="saveAllSettings()">Save Changes</button>
         </div>
 
-        <div class="setting-divider">Ballpen Hoppers</div>
-
         <div class="setting-row">
-          <div class="setting-label">Ballpen — Max Capacity (per hopper)</div>
-          <div class="setting-desc">Total pen slots in each hopper</div>
+          <div class="setting-label">Ballpen — Max Capacity</div>
+          <div class="setting-desc">Total slots for ballpens in the vendo</div>
           <div class="setting-controls">
-            <input class="setting-input" type="number" id="s-bp-max" value="20" min="1">
+            <input class="setting-input" type="number" id="s-bp-max" value="50" min="1">
             <span class="setting-unit">pcs</span>
           </div>
         </div>
         <div class="setting-row">
-          <div class="setting-label">Ballpen — Low Stock Alert (per hopper)</div>
-          <div class="setting-desc">Notify when any hopper falls below this number</div>
+          <div class="setting-label">Ballpen — Low Stock Alert</div>
+          <div class="setting-desc">Notify when stock falls below this number</div>
           <div class="setting-controls">
-            <input class="setting-input" type="number" id="s-bp-threshold" value="5" min="1">
+            <input class="setting-input" type="number" id="s-bp-threshold" value="10" min="1">
             <span class="setting-unit">pcs</span>
+          </div>
+        </div>
+        <div class="setting-divider">Bond Paper</div>
+        <div class="setting-row">
+          <div class="setting-label">Bond Paper — Max Capacity</div>
+          <div class="setting-desc">Total slots for bond paper sheets</div>
+          <div class="setting-controls">
+            <input class="setting-input" type="number" id="s-pp-max" value="200" min="1">
+            <span class="setting-unit">sheets</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Bond Paper — Low Stock Alert</div>
+          <div class="setting-controls">
+            <input class="setting-input" type="number" id="s-pp-threshold" value="30" min="1">
+            <span class="setting-unit">sheets</span>
           </div>
         </div>
 
@@ -1581,37 +1495,6 @@ html.dark .gauge-track{stroke:#1e2a42}
 
     <div style="height:4px"></div>
 
-    <!-- MONTHLY SALES ANALYTICS -->
-    <div id="analytics-section" style="display:none">
-      <div class="monthly-table-card">
-        <div class="section-header">
-          <div>
-            <div class="section-title">Monthly Sales Analytics</div>
-            <div class="section-hint">Total ballpen sales per hopper each month · Stocks auto-adjusted on sale</div>
-          </div>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="monthly-table" id="monthly-table">
-            <thead>
-              <tr>
-                <th>Month</th>
-                <th>Hopper 1 (Ballpen 1)</th>
-                <th>Hopper 2 (Ballpen 2)</th>
-                <th>Hopper 3 (Ballpen 3)</th>
-                <th>Total Units</th>
-                <th>Total Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="monthly-tbody">
-              <!-- Rendered by renderMonthlyTable() -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div style="height:4px"></div>
-
     <!-- CATEGORIES & MODELS -->
     <div class="categories-card" id="categories-section" style="display:none">
       <div class="section-header">
@@ -1654,25 +1537,6 @@ html.dark .gauge-track{stroke:#1e2a42}
     </div>
   </div>
 </nav>
-
-<!-- FEATURE NOT AVAILABLE MODAL -->
-<div class="modal-overlay" id="fna-modal">
-  <div class="fna-modal">
-    <div class="fna-icon-wrap">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    </div>
-    <div class="fna-badge">Planned for Future Development</div>
-    <div class="fna-title" id="fna-title">Feature Not Available</div>
-    <div class="fna-desc" id="fna-desc">
-      This feature is not yet supported in the current hardware setup.
-    </div>
-    <div class="fna-note" id="fna-note">
-      <b>Current Version:</b> This thesis prototype supports the features active in the current ESP32 build.<br>
-      This capability is on the roadmap for a future version of the system.
-    </div>
-    <button class="btn-fna-close" onclick="closeModal('fna-modal')">Understood</button>
-  </div>
-</div>
 
 <!-- RESTOCK MODAL -->
 <div class="modal-overlay" id="restock-modal">
@@ -1763,10 +1627,10 @@ html.dark .gauge-track{stroke:#1e2a42}
         <input type="number" id="mc-threshold" min="1" placeholder="Alert below this"/>
       </div>
       <div class="modal-field" style="flex-direction:row;align-items:center;gap:10px">
-        <input type="checkbox" id="mc-sensor" style="width:16px;height:16px;accent-color:var(--accent)" onclick="event.preventDefault();showFNA('Sensor Live Feed','Real-time stock detection via physical sensors is not wired up in the current hardware build. The system tracks stock by decrementing on each dispensed sale.','This feature requires additional IR or optical sensors per hopper slot, and firmware changes to read live sensor data. It is planned for a future hardware revision.');return false;"/>
-        <label for="mc-sensor" style="font-size:13px;cursor:pointer">Sensor connected — <span style="font-size:11.5px;color:var(--warning)">(Not available in current build)</span></label>
+        <input type="checkbox" id="mc-sensor" style="width:16px;height:16px;accent-color:var(--accent)"/>
+        <label for="mc-sensor" style="font-size:13px;cursor:pointer">Sensor connected (ESP32 live feed)</label>
       </div>
-      <div style="font-size:11.5px;color:var(--text-3)">Sensor live-feed is planned for a future hardware revision.</div>
+      <div style="font-size:11.5px;color:var(--text-3)">Mark as connected when you wire up the sensor for this slot.</div>
     </div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal('model-config-modal')">Cancel</button>
@@ -1792,21 +1656,29 @@ const state = {
   ballpen: {
     name: 'Ballpen',
     unit: 'pcs',
-    stock: 35,   // this is aggregate — individual stocks come from categories
-    max: 60,
+    stock: 35,
+    max: 50,
     threshold: 10,
-    price: 20.00,  // hardware price matches PRICE define in ESP32
-    cost: 0,
+    price: 5.00,
+    cost: 3.00,
     soldToday: 8,
     color: '#3b82f6'
   },
-  // Bond Paper is NOT supported by the current hardware — removed from active state
+  paper: {
+    name: 'Bond Paper',
+    unit: 'sheets',
+    stock: 28,
+    max: 200,
+    threshold: 30,
+    price: 2.00,
+    cost: 1.00,
+    soldToday: 45,
+    color: '#22d3ee'
+  },
   notifications: [],
   transactions: [],
-  salesHourly: { h1: [], h2: [], h3: [] },
-  weeklyRevenue: { h1: [], h2: [], h3: [] },
-  // Monthly sales data — structure: { month, year, h1, h2, h3 }
-  monthlySales: []
+  salesHourly: { ballpen: [], paper: [] },
+  weeklyRevenue: { ballpen: [], paper: [] }
 };
 
 const hardwareProducts = [
@@ -1819,44 +1691,24 @@ const hardwareProducts = [
 // SEED DEMO DATA
 // ═══════════════════════════════════════════════════════
 function seedDemoData() {
-  // Per-hopper hourly sales (24 hours)
-  state.salesHourly.h1 = [0,0,1,0,2,4,6,5,5,3,4,4,6,5,7,4,4,5,6,0,0,0,0,0];
-  state.salesHourly.h2 = [0,0,0,0,1,2,3,2,3,2,3,2,3,3,4,3,2,3,4,0,0,0,0,0];
-  state.salesHourly.h3 = [0,0,0,0,0,1,2,1,2,1,2,1,2,2,2,1,1,2,2,0,0,0,0,0];
+  const bpHourly = [0,0,1,0,3,5,8,6,7,4,6,5,8,7,9,6,5,7,8,0,0,0,0,0];
+  const ppHourly = [0,0,0,2,5,12,20,15,18,10,14,12,20,18,22,15,12,18,22,0,0,0,0,0];
+  state.salesHourly.ballpen = bpHourly;
+  state.salesHourly.paper = ppHourly;
+  state.weeklyRevenue.ballpen = [55,70,45,80,65,90,40];
+  state.weeklyRevenue.paper = [30,45,20,55,40,60,25];
 
-  // Per-hopper weekly revenue
-  state.weeklyRevenue.h1 = [40,60,35,70,55,80,30];
-  state.weeklyRevenue.h2 = [25,38,20,44,34,50,18];
-  state.weeklyRevenue.h3 = [15,22,12,28,20,32,10];
-
-  // Monthly sales for all 12 months — May (index 4) is current, others empty/future
-  const months = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-  state.monthlySales = months.map((m, idx) => {
-    if (idx < 4) {
-      // Past months — empty for now (can be filled from Firebase history)
-      return { month: m, year: 2025, h1: 0, h2: 0, h3: 0 };
-    } else if (idx === 4) {
-      // Current month (May 2025) — computed from transactions
-      return { month: m, year: 2025, h1: state.salesHourly.h1.reduce((a,b)=>a+b,0),
-               h2: state.salesHourly.h2.reduce((a,b)=>a+b,0),
-               h3: state.salesHourly.h3.reduce((a,b)=>a+b,0) };
-    } else {
-      // Future months
-      return { month: m, year: 2025, h1: null, h2: null, h3: null };
-    }
-  });
-
-  // Sample transactions (ballpen only)
-  const hoppers = ['Hopper 1','Hopper 2','Hopper 1','Hopper 3','Hopper 1','Hopper 2'];
-  const qtys = [1,1,1,1,2,1];
-  const times = ['08:12','09:34','11:22','12:47','13:30','14:55'];
-  state.transactions = hoppers.map((p,i) => ({
-    product: p, qty: qtys[i],
-    amount: qtys[i] * state.ballpen.price,
-    method: 'Coin', time: times[i]
+  const products = ['Ballpen','Ballpen','Bond Paper','Ballpen','Bond Paper','Bond Paper','Ballpen'];
+  const qtys = [1,2,5,1,3,10,2];
+  const prices = [5,5,2,5,2,2,5];
+  const times = ['08:12','09:34','10:05','11:22','12:47','13:30','14:55'];
+  state.transactions = products.map((p,i) => ({
+    product: p,
+    qty: qtys[i],
+    amount: qtys[i] * prices[i],
+    method: i % 2 === 0 ? 'Coin' : 'Bill',
+    time: times[i]
   }));
-  state.ballpen.soldToday = qtys.reduce((a,b)=>a+b,0);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1977,31 +1829,20 @@ function renderProduct() {
 // RENDER METRICS
 // ═══════════════════════════════════════════════════════
 function renderMetrics() {
-  const totalUnits = state.ballpen.soldToday;
-  const totalRev   = totalUnits * state.ballpen.price;
+  const bpRev = state.ballpen.soldToday * state.ballpen.price;
+  const ppRev = state.paper.soldToday * state.paper.price;
+  const totalRev = bpRev + ppRev;
+  const bpProfit = state.ballpen.soldToday * (state.ballpen.price - state.ballpen.cost);
+  const ppProfit = state.paper.soldToday * (state.paper.price - state.paper.cost);
+  const totalProfit = bpProfit + ppProfit;
+  const totalUnits = state.ballpen.soldToday + state.paper.soldToday;
 
   document.getElementById('m-revenue').textContent = '₱' + totalRev.toFixed(2);
+  document.getElementById('m-profit').textContent = '₱' + totalProfit.toFixed(2);
   document.getElementById('m-units').textContent = totalUnits;
-
-  // Per-hopper sold counts
-  const h1 = categories[0]?.models[0] ? (categories[0].models[0].max - categories[0].models[0].stock) : 0;
-  const h2 = categories[0]?.models[1] ? (categories[0].models[1].max - categories[0].models[1].stock) : 0;
-  const h3 = categories[0]?.models[2] ? (categories[0].models[2].max - categories[0].models[2].stock) : 0;
   document.getElementById('m-units-sub').textContent =
-    `Hopper 1: ${h1} · Hopper 2: ${h2} · Hopper 3: ${h3}`;
+    `Ballpens: ${state.ballpen.soldToday} · Bond Paper: ${state.paper.soldToday}`;
 
-  // Offline sales metric — pulled from Firebase or local count
-  const offlineEl = document.getElementById('m-offline');
-  const offlineSubEl = document.getElementById('m-offline-sub');
-  if (offlineEl) {
-    const offCount = state._offlineSalesTotal || 0;
-    offlineEl.textContent = offCount;
-    offlineSubEl.textContent = offCount > 0 ? 'Pending sync when reconnected' : 'All sales synced';
-    document.getElementById('m-offline-card').className =
-      'metric-card ' + (offCount > 0 ? 'warning-card' : 'success-card');
-  }
-
-  // Stock alerts
   let alerts = 0;
   const messages = [];
   categories.forEach(cat => {
@@ -2013,6 +1854,11 @@ function renderMetrics() {
       }
     });
   });
+  // fallback to old state if categories empty
+  if (!categories.length) {
+    if (state.ballpen.stock <= state.ballpen.threshold) { alerts++; messages.push('Ballpen low'); }
+    if (state.paper.stock <= state.paper.threshold) { alerts++; messages.push('Bond Paper low'); }
+  }
   document.getElementById('m-alerts').textContent = alerts;
   document.getElementById('m-alert-sub').textContent = alerts > 0 ? messages.join(', ') : 'All stocks normal';
   const alertIcon = document.getElementById('m-alert-icon');
@@ -2021,13 +1867,9 @@ function renderMetrics() {
     alertIcon.style.background = 'var(--warning-bg)';
     alertIcon.style.color = 'var(--warning)';
     alertIcon.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
-  } else {
-    alertIcon.style.background = 'var(--success-bg)';
-    alertIcon.style.color = 'var(--success)';
-    alertIcon.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
   }
 
-  // Notification badge
+  // Update notification badge
   document.getElementById('notif-count-badge').textContent = state.notifications.length;
   document.getElementById('notif-dot').style.display = state.notifications.length > 0 ? 'block' : 'none';
 }
@@ -2042,13 +1884,15 @@ function renderTransactions() {
     return;
   }
   const rows = [...state.transactions].reverse().map(t => {
-    const iconColor = '#3b82f6';
-    const icon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="1.8"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>`;
+    const isBp = t.product === 'Ballpen';
+    const iconColor = isBp ? '#3b82f6' : '#22d3ee';
+    const icon = isBp
+      ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="1.8"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>`
+      : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
     const isHw = t.source === 'ESP32';
     const methodBadge = isHw
       ? `<span class="txn-method-badge" style="background:var(--success-bg);color:var(--success);border-color:var(--success)">⚡ ESP32</span>`
-      : (t.offline ? `<span class="txn-method-badge" style="background:var(--warning-bg);color:var(--warning);border-color:var(--warning)">📶 Offline</span>`
-                   : `<span class="txn-method-badge">${t.method}</span>`);
+      : `<span class="txn-method-badge">${t.method}</span>`;
     return `<tr>
       <td><div class="txn-product"><div class="txn-product-icon">${icon}</div>${t.product}</div></td>
       <td class="txn-qty">${t.qty}x</td>
@@ -2201,34 +2045,34 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
 // SETTINGS
 // ═══════════════════════════════════════════════════════
 function saveAllSettings() {
-  const bpMax    = parseInt(document.getElementById('s-bp-max').value);
+  const bpMax = parseInt(document.getElementById('s-bp-max').value);
   const bpThresh = parseInt(document.getElementById('s-bp-threshold').value);
+  const ppMax = parseInt(document.getElementById('s-pp-max').value);
+  const ppThresh = parseInt(document.getElementById('s-pp-threshold').value);
   const hw1Price = parseFloat(document.getElementById('s-hw-1-price').value);
   const hw2Price = parseFloat(document.getElementById('s-hw-2-price').value);
   const hw3Price = parseFloat(document.getElementById('s-hw-3-price').value);
 
-  if (!isNaN(bpThresh) && !isNaN(bpMax) && bpThresh >= bpMax) {
+  if (bpThresh >= bpMax || ppThresh >= ppMax) {
     showToast('warn', 'Threshold must be less than max capacity.');
     return;
   }
 
-  // Apply max/threshold to all ballpen hopper models
-  if (categories[0]) {
-    categories[0].models.forEach(m => {
-      if (!isNaN(bpMax) && bpMax > 0) m.max = bpMax;
-      if (!isNaN(bpThresh) && bpThresh > 0) m.threshold = bpThresh;
-    });
-  }
+  state.ballpen.max = bpMax || state.ballpen.max;
+  state.ballpen.threshold = bpThresh || state.ballpen.threshold;
+  state.paper.max = ppMax || state.paper.max;
+  state.paper.threshold = ppThresh || state.paper.threshold;
   hardwareProducts[0].price = isNaN(hw1Price) ? hardwareProducts[0].price : hw1Price;
   hardwareProducts[1].price = isNaN(hw2Price) ? hardwareProducts[1].price : hw2Price;
   hardwareProducts[2].price = isNaN(hw3Price) ? hardwareProducts[2].price : hw3Price;
-  state.ballpen.price = hardwareProducts[0].price; // use first hopper price as reference
 
-  renderDashboardProducts();
+  renderProduct('ballpen');
+  renderProduct('paper');
   renderMetrics();
   checkStockAlerts();
   addNotification('ok', 'Settings saved successfully.');
 
+  // ── Push updated prices to Firebase so ESP32 reads them
   if (fb.connected) {
     fb.put('/config/prices', {
       ballpen1:  hardwareProducts[0].price,
@@ -2238,8 +2082,9 @@ function saveAllSettings() {
     }).then(ok => {
       if (ok) {
         showToast('ok', `Prices pushed to Firebase → ESP32 will update within 30s`);
+        addNotification('info', `Firebase price sync: ${hardwareProducts[0].name} ₱${hardwareProducts[0].price.toFixed(2)}, ${hardwareProducts[1].name} ₱${hardwareProducts[1].price.toFixed(2)}, ${hardwareProducts[2].name} ₱${hardwareProducts[2].price.toFixed(2)}`);
       } else {
-        showToast('warn', 'Settings saved locally but Firebase sync failed.');
+        showToast('warn', 'Settings saved locally but Firebase sync failed. Check connection.');
       }
     });
   } else {
@@ -2248,8 +2093,10 @@ function saveAllSettings() {
 }
 
 function loadSettingsToForm() {
-  document.getElementById('s-bp-max').value = categories[0]?.models[0]?.max || 20;
-  document.getElementById('s-bp-threshold').value = categories[0]?.models[0]?.threshold || 5;
+  document.getElementById('s-bp-max').value = state.ballpen.max;
+  document.getElementById('s-bp-threshold').value = state.ballpen.threshold;
+  document.getElementById('s-pp-max').value = state.paper.max;
+  document.getElementById('s-pp-threshold').value = state.paper.threshold;
   document.getElementById('s-hw-1-price').value = hardwareProducts[0].price.toFixed(2);
   document.getElementById('s-hw-2-price').value = hardwareProducts[1].price.toFixed(2);
   document.getElementById('s-hw-3-price').value = hardwareProducts[2].price.toFixed(2);
@@ -2299,28 +2146,24 @@ function initCharts() {
       labels: hours,
       datasets: [
         {
-          label: 'Hopper 1',
-          data: state.salesHourly.h1.map(v => v * state.ballpen.price),
+          label: 'Ballpen',
+          data: state.salesHourly.ballpen.map((v,i) => v * state.ballpen.price),
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59,130,246,0.08)',
-          fill: true, tension: .4, borderWidth: 2,
+          fill: true,
+          tension: .4,
+          borderWidth: 2,
           pointBackgroundColor: '#3b82f6'
         },
         {
-          label: 'Hopper 2',
-          data: state.salesHourly.h2.map(v => v * state.ballpen.price),
+          label: 'Bond Paper',
+          data: state.salesHourly.paper.map((v,i) => v * state.paper.price),
           borderColor: '#22d3ee',
           backgroundColor: 'rgba(34,211,238,0.06)',
-          fill: true, tension: .4, borderWidth: 2,
+          fill: true,
+          tension: .4,
+          borderWidth: 2,
           pointBackgroundColor: '#22d3ee'
-        },
-        {
-          label: 'Hopper 3',
-          data: state.salesHourly.h3.map(v => v * state.ballpen.price),
-          borderColor: '#a78bfa',
-          backgroundColor: 'rgba(167,139,250,0.06)',
-          fill: true, tension: .4, borderWidth: 2,
-          pointBackgroundColor: '#a78bfa'
         }
       ]
     },
@@ -2337,9 +2180,20 @@ function initCharts() {
     data: {
       labels: days,
       datasets: [
-        { label: 'Hopper 1', data: state.weeklyRevenue.h1, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4, borderSkipped: false },
-        { label: 'Hopper 2', data: state.weeklyRevenue.h2, backgroundColor: 'rgba(34,211,238,0.5)', borderRadius: 4, borderSkipped: false },
-        { label: 'Hopper 3', data: state.weeklyRevenue.h3, backgroundColor: 'rgba(167,139,250,0.5)', borderRadius: 4, borderSkipped: false }
+        {
+          label: 'Ballpen',
+          data: state.weeklyRevenue.ballpen,
+          backgroundColor: 'rgba(59,130,246,0.7)',
+          borderRadius: 4,
+          borderSkipped: false
+        },
+        {
+          label: 'Bond Paper',
+          data: state.weeklyRevenue.paper,
+          backgroundColor: 'rgba(34,211,238,0.5)',
+          borderRadius: 4,
+          borderSkipped: false
+        }
       ]
     },
     options: { ...commonOptions,
@@ -2359,22 +2213,20 @@ const pageTitles = {
   inventory: 'Inventory',
   settings: 'Settings',
   transactions: 'Transactions',
-  categories: 'Categories & Models',
-  analytics: 'Monthly Sales Analytics'
+  categories: 'Categories & Models'
 };
 const sectionMap = {
   dashboard: null,
   inventory: '.products-grid',
   settings: '.settings-card',
   transactions: '.txn-card',
-  categories: '.categories-card',
-  analytics: '#analytics-section'
+  categories: '.categories-card'
 };
 
 function setPage(page) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => {
-    if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${page}'`)) {
+    if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(page)) {
       el.classList.add('active');
     }
   });
@@ -2382,21 +2234,15 @@ function setPage(page) {
 
   // Show/hide categories section
   const catSection = document.getElementById('categories-section');
-  catSection.style.display = page === 'categories' ? 'flex' : 'none';
   if (page === 'categories') {
+    catSection.style.display = 'flex';
     renderCategories();
     setTimeout(() => catSection.scrollIntoView({behavior:'smooth',block:'start'}), 50);
+  } else {
+    catSection.style.display = 'none';
   }
 
-  // Show/hide analytics section
-  const analyticsSection = document.getElementById('analytics-section');
-  analyticsSection.style.display = page === 'analytics' ? 'block' : 'none';
-  if (page === 'analytics') {
-    renderMonthlyTable();
-    setTimeout(() => analyticsSection.scrollIntoView({behavior:'smooth',block:'start'}), 50);
-  }
-
-  if (sectionMap[page] && page !== 'categories' && page !== 'analytics') {
+  if (sectionMap[page] && page !== 'categories') {
     document.querySelector(sectionMap[page])?.scrollIntoView({behavior:'smooth',block:'start'});
   } else if (!sectionMap[page]) {
     document.getElementById('content').scrollTo({top:0,behavior:'smooth'});
@@ -2420,84 +2266,20 @@ function closeSidebar() {
 }
 
 // ═══════════════════════════════════════════════════════
-// SHOW FEATURE NOT AVAILABLE MODAL
+// SIMULATE SALE (for demo — replace with ESP32 trigger)
 // ═══════════════════════════════════════════════════════
-function showFNA(title, desc, note) {
-  document.getElementById('fna-title').textContent = title || 'Feature Not Available';
-  document.getElementById('fna-desc').textContent = desc ||
-    'This feature is not supported in the current hardware setup of this thesis prototype.';
-  document.getElementById('fna-note').innerHTML =
-    `<b>Current Version:</b> ${note || 'This capability is planned for a future development phase of the system.'}`;
-  document.getElementById('fna-modal').classList.add('open');
-}
-
-// ═══════════════════════════════════════════════════════
-// MONTHLY SALES TABLE
-// ═══════════════════════════════════════════════════════
-function renderMonthlyTable() {
-  const tbody = document.getElementById('monthly-tbody');
-  if (!tbody) return;
-  const currentMonth = new Date().getMonth(); // 0-indexed
-
-  tbody.innerHTML = state.monthlySales.map((row, idx) => {
-    const isCurrent = idx === currentMonth;
-    const isFuture = row.h1 === null;
-    const total = isFuture ? null : (row.h1 + row.h2 + row.h3);
-    const revenue = total !== null ? (total * state.ballpen.price) : null;
-
-    const monthCell = isCurrent
-      ? `${row.month} ${row.year}<span class="month-badge-current">Current</span>`
-      : `${row.month} ${row.year}`;
-
-    const fmtNum = (v) => v === null
-      ? `<span class="month-cell-future">—</span>`
-      : `<span style="font-family:var(--font-mono)">${v}</span>`;
-
-    const fmtRev = (v) => v === null
-      ? `<span class="month-cell-future">—</span>`
-      : `<span style="font-family:var(--font-mono);color:var(--success)">₱${v.toFixed(2)}</span>`;
-
-    return `<tr ${isCurrent ? 'style="background:var(--accent-glow)"' : ''}>
-      <td style="font-weight:${isCurrent?'600':'400'}">${monthCell}</td>
-      <td>${fmtNum(row.h1)}</td>
-      <td>${fmtNum(row.h2)}</td>
-      <td>${fmtNum(row.h3)}</td>
-      <td>${fmtNum(total)}</td>
-      <td>${fmtRev(revenue)}</td>
-    </tr>`;
-  }).join('');
-}
-
-// Update current month sales when a dispense happens
-function updateMonthlySales(hopperIdx, qty) {
-  const monthIdx = new Date().getMonth();
-  if (state.monthlySales[monthIdx]) {
-    const keys = ['h1','h2','h3'];
-    state.monthlySales[monthIdx][keys[hopperIdx]] =
-      (state.monthlySales[monthIdx][keys[hopperIdx]] || 0) + qty;
-  }
-}
-
-// ═══════════════════════════════════════════════════════
-// SIMULATE SALE (demo only — ballpen hoppers)
-// ═══════════════════════════════════════════════════════
-function simulateSale(hopperIdx) {
-  const cat = categories[0]; // Ballpen category
-  if (!cat || !cat.models[hopperIdx]) return;
-  const m = cat.models[hopperIdx];
-  if (m.stock <= 0) { showToast('danger', `Hopper ${hopperIdx+1} is empty!`); return; }
-
-  m.stock = Math.max(0, m.stock - 1);
-  state.ballpen.soldToday++;
-  const amount = state.ballpen.price;
+function simulateSale(key, qty) {
+  const p = state[key];
+  if (p.stock < qty) { showToast('danger', `Not enough ${p.name} in stock!`); return; }
+  p.stock -= qty;
+  p.soldToday += qty;
+  const amount = qty * p.price;
   const now = new Date();
   const time = now.toLocaleTimeString('en-PH', {hour:'2-digit',minute:'2-digit'});
-
   state.transactions.push({
-    product: `Hopper ${hopperIdx+1}`, qty: 1, amount, method: 'Demo', time
+    product: p.name, qty, amount, method: 'Demo', time
   });
-  updateMonthlySales(hopperIdx, 1);
-  renderDashboardProducts();
+  renderProduct(key);
   renderMetrics();
   renderTransactions();
   checkStockAlerts();
@@ -2714,46 +2496,40 @@ async function checkDispenseSignal() {
       weekday:'short', month:'short', day:'numeric'
     });
 
-    const product   = signal.product  || 'Hopper';
-    const price     = parseFloat(signal.price)    || state.ballpen.price;
+    const product   = signal.product  || 'Unknown';
+    const price     = parseFloat(signal.price)    || 0;
+    const inserted  = parseFloat(signal.inserted) || 0;
+    const change    = parseFloat(signal.change)   || 0;
     const qty       = parseInt(signal.qty)        || 1;
-    const fbKey     = signal.hopper  || signal.fbKey || 'ballpen1';
-    const isOfflineSync = signal.offline_sync || false;
+    const fbKey     = signal.fbKey || (product === 'Ballpen' ? 'ballpen' : 'bondpaper');
 
-    // Map hopper fbKey to index
-    const hopperMap = { ballpen1: 0, ballpen2: 1, ballpen3: 2 };
-    const hopperIdx = hopperMap[fbKey] ?? 0;
-
-    // ── Decrement stock on the matching model
-    const ballpenCat = categories[0];
-    if (ballpenCat && ballpenCat.models[hopperIdx]) {
-      ballpenCat.models[hopperIdx].stock = Math.max(0,
-        ballpenCat.models[hopperIdx].stock - qty);
-    }
-    state.ballpen.soldToday += qty;
-    updateMonthlySales(hopperIdx, qty);
-
-    // Track offline sales total
-    if (isOfflineSync) {
-      state._offlineSalesTotal = Math.max(0, (state._offlineSalesTotal || 0) - qty);
+    // ── Update local state revenue/sold counters
+    const matched = findModelByFbKey(fbKey);
+    if (matched) {
+      matched.model.stock = Math.max(0, matched.model.stock - qty);
+      state.ballpen.soldToday += qty;
+    } else if (fbKey === 'ballpen') {
+      state.ballpen.soldToday += qty;
+      state.ballpen.stock = Math.max(0, state.ballpen.stock - qty);
+    } else if (fbKey === 'bondpaper') {
+      state.paper.soldToday += qty;
+      state.paper.stock = Math.max(0, state.paper.stock - qty);
     }
 
-    // ── Log transaction
+    // ── Log transaction with software timestamp
     state.transactions.push({
-      product: `Hopper ${hopperIdx+1} (${fbKey})`,
-      qty, amount: price * qty, method: 'Coin', time,
-      source: 'ESP32',
-      offline: isOfflineSync
+      product, qty, amount: price * qty, method: 'Coin', time,
+      inserted, change, source: 'ESP32'
     });
 
     // ── Re-render
-    renderDashboardProducts();
+    renderProduct('ballpen'); renderProduct('paper');
     renderMetrics(); renderTransactions(); checkStockAlerts();
 
     // ── Notify
-    showToast('ok', `ESP32 dispensed ${qty}× Ballpen (Hopper ${hopperIdx+1}) at ${time}${isOfflineSync ? ' [Offline Sync]' : ''}`);
+    showToast('ok', `ESP32 dispensed ${qty}× ${product} at ${time}`);
     addNotification('ok',
-      `Hardware sale: ${qty}× Ballpen Hopper ${hopperIdx+1} — ₱${(price*qty).toFixed(2)} — ${dateStr} ${time}${isOfflineSync ? ' (synced from offline)' : ''}`
+      `Hardware sale: ${qty}× ${product} — ₱${(price*qty).toFixed(2)} received, change ₱${change.toFixed(2)} — ${dateStr} ${time}`
     );
     document.getElementById('fb-last-signal').textContent = `Last sale: ${time}`;
 
@@ -2797,22 +2573,9 @@ async function pullStockFromFirebase() {
       };
     });
 
-    // Only update ballpen category — Bond Paper not in hardware
-    const ballpenData = nextCategories.find(c => c.name.toLowerCase().includes('ballpen') || c.id === 'cat-1');
-    if (ballpenData) {
-      const existingIdx = categories.findIndex(c => c.id === ballpenData.id || c.id === 'cat-1');
-      if (existingIdx >= 0) {
-        categories[existingIdx] = ballpenData;
-      }
-    }
-
-    // Also pull offline sale count
-    const offlineData = await fb.get('/offline_pending').catch(() => null);
-    if (offlineData) {
-      state._offlineSalesTotal = (offlineData.h1||0) + (offlineData.h2||0) + (offlineData.h3||0);
-    }
-
-    renderDashboardProducts();
+    if (!nextCategories.length) return;
+    categories = nextCategories;
+    renderProduct();
     renderMetrics();
   } catch (e) {
     console.warn('[Firebase] Stock sync error:', e.message);
@@ -2842,10 +2605,8 @@ function init() {
   renderDashboardProducts();
   renderMetrics();
   renderTransactions();
-  renderMonthlyTable();
   initCharts();
   checkStockAlerts();
-  state._offlineSalesTotal = 0;
 
   // Set sidebar to offline until Firebase connects
   const connDot = document.getElementById('conn-dot');
@@ -2854,10 +2615,12 @@ function init() {
   if (connLabel) connLabel.textContent = 'Disconnected';
 
   // Demo mode only runs if Firebase is NOT connected
+  // (simulates sales so the dashboard looks alive during offline testing)
   demoInterval = setInterval(() => {
     if (!fb.connected && Math.random() < 0.3) {
-      const hopperIdx = Math.floor(Math.random() * 3);
-      simulateSale(hopperIdx);
+      const key = Math.random() < 0.6 ? 'ballpen' : 'paper';
+      const qty = key === 'paper' ? (Math.random() < .5 ? 1 : 5) : 1;
+      simulateSale(key, qty);
     }
   }, 8000);
 
@@ -2876,14 +2639,18 @@ let categories = [
   {
     id: 'cat-1', name: 'Ballpen',
     models: [
-      { id:'mdl-101', name:'Hopper 1 (Ballpen 1)', stock:14, max:20, threshold:5, sensorConnected:false, fbKey:'ballpen1' },
-      { id:'mdl-102', name:'Hopper 2 (Ballpen 2)', stock:3,  max:20, threshold:5, sensorConnected:false, fbKey:'ballpen2' },
-      { id:'mdl-103', name:'Hopper 3 (Ballpen 3)', stock:20, max:20, threshold:5, sensorConnected:false, fbKey:'ballpen3' }
+      { id:'mdl-101', name:'Ballpen 1',  stock:14, max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen1' },
+      { id:'mdl-102', name:'Ballpen 2',  stock:3,  max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen2' },
+      { id:'mdl-103', name:'Ballpen 3',  stock:20, max:20, threshold:5,  sensorConnected:false, fbKey:'ballpen3' }
+    ]
+  },
+  {
+    id: 'cat-2', name: 'Bond Paper',
+    models: [
+      { id:'mdl-201', name:'Short (8.5×11)',  stock:8,  max:50, threshold:10, sensorConnected:false },
+      { id:'mdl-202', name:'Long (8.5×13)',   stock:0,  max:50, threshold:10, sensorConnected:false }
     ]
   }
-  // Bond Paper category is NOT supported by the current hardware.
-  // The vendo machine only dispenses ballpens via the 3 stepper motor hoppers.
-  // Bond Paper would require a separate hardware module — planned for future development.
 ];
 
 function escHtml(str) {
@@ -2996,18 +2763,6 @@ function addCategory() {
   const input = document.getElementById('new-cat-name');
   const name = input.value.trim();
   if (!name) { showToast('warn', 'Please enter a category name.'); return; }
-
-  // Check if trying to add a non-ballpen category (hardware only supports ballpen hoppers)
-  const unsupported = ['bond paper','paper','a4','short bond','long bond','notebook','pencil','eraser'];
-  if (unsupported.some(u => name.toLowerCase().includes(u))) {
-    showFNA(
-      `"${name}" — Not Supported`,
-      `The current hardware only supports ballpen hoppers. Adding a "${name}" category would not sync with any physical dispenser.`,
-      'The vendo machine uses 3 stepper motor hoppers designed exclusively for ballpens. Dispensing other products would require a different hardware module and firmware. This is planned for a future version.'
-    );
-    return;
-  }
-
   if (categories.find(c => c.name.toLowerCase() === name.toLowerCase())) {
     showToast('warn', 'A category with that name already exists.'); return;
   }

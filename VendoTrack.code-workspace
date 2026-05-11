@@ -9,6 +9,7 @@
 		}
 	],
 	"settings": {
-		"liveServer.settings.multiRootWorkspaceName": "VendoTrack"
+		"liveServer.settings.multiRootWorkspaceName": "VendoTrack",
+		"git.ignoreLimitWarning": true
 	}
 }
