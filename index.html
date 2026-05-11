@@ -2176,6 +2176,8 @@ function confirmRestock() {
   renderMetrics();
   checkStockAlerts();
   addNotification('ok', `${p.name} restocked by ${actualAdded} ${p.unit}. New total: ${p.stock} ${p.unit}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   closeModal('restock-modal');
 }
 
@@ -2189,6 +2191,8 @@ function confirmSetStock() {
   renderMetrics();
   checkStockAlerts();
   addNotification('info', `${p.name} stock manually set to ${p.stock} ${p.unit}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   closeModal('stock-set-modal');
 }
 
@@ -2501,6 +2505,8 @@ function simulateSale(hopperIdx) {
   renderMetrics();
   renderTransactions();
   checkStockAlerts();
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2654,8 +2660,11 @@ function startDispenseSignalListener() {
 
 function startStockSyncListener() {
   if (fb.stockTimer) clearInterval(fb.stockTimer);
-  fb.stockTimer = setInterval(pullStockFromFirebase, 5000); // poll every 5 s
-  pullStockFromFirebase();
+  // Push local data to Firebase immediately on startup
+  syncStockToFirebase('connection established', true);
+  // Then periodically check if other devices made changes (30 second interval)
+  // This won't overwrite local data unless Firebase data is actually different
+  fb.stockTimer = setInterval(pullStockFromFirebase, 30000);
 }
 
 function findModelByFbKey(fbKey) {
@@ -2749,6 +2758,8 @@ async function checkDispenseSignal() {
     // ── Re-render
     renderDashboardProducts();
     renderMetrics(); renderTransactions(); checkStockAlerts();
+    saveStateToLocalStorage();
+    saveCategoriesToLocalStorage();
 
     // ── Notify
     showToast('ok', `ESP32 dispensed ${qty}× Ballpen (Hopper ${hopperIdx+1}) at ${time}${isOfflineSync ? ' [Offline Sync]' : ''}`);
@@ -2802,7 +2813,16 @@ async function pullStockFromFirebase() {
     if (ballpenData) {
       const existingIdx = categories.findIndex(c => c.id === ballpenData.id || c.id === 'cat-1');
       if (existingIdx >= 0) {
-        categories[existingIdx] = ballpenData;
+        // Check if Firebase data is actually different from local data
+        const existingData = JSON.stringify(categories[existingIdx]);
+        const newData = JSON.stringify(ballpenData);
+        if (existingData !== newData) {
+          categories[existingIdx] = ballpenData;
+          renderDashboardProducts();
+          renderMetrics();
+          saveStateToLocalStorage();
+          saveCategoriesToLocalStorage();
+        }
       }
     }
 
@@ -2812,8 +2832,6 @@ async function pullStockFromFirebase() {
       state._offlineSalesTotal = (offlineData.h1||0) + (offlineData.h2||0) + (offlineData.h3||0);
     }
 
-    renderDashboardProducts();
-    renderMetrics();
   } catch (e) {
     console.warn('[Firebase] Stock sync error:', e.message);
   }
@@ -2834,10 +2852,77 @@ function tryRestoreFbConnection() {
 }
 
 // ═══════════════════════════════════════════════════════
+// DATA PERSISTENCE (localStorage)
+// ═══════════════════════════════════════════════════════
+function saveStateToLocalStorage() {
+  try {
+    localStorage.setItem('vt-state', JSON.stringify(state));
+  } catch(e) {
+    console.error('[Storage] Failed to save state:', e.message);
+  }
+}
+
+function saveCategoriesToLocalStorage() {
+  try {
+    localStorage.setItem('vt-categories', JSON.stringify(categories));
+  } catch(e) {
+    console.error('[Storage] Failed to save categories:', e.message);
+  }
+}
+
+function loadStateFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem('vt-state');
+    if (saved) {
+      const loaded = JSON.parse(saved);
+      // Merge loaded data with state to preserve any new fields
+      Object.assign(state, loaded);
+      return true;
+    }
+  } catch(e) {
+    console.error('[Storage] Failed to load state:', e.message);
+  }
+  return false;
+}
+
+function loadCategoriesFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem('vt-categories');
+    if (saved) {
+      const loaded = JSON.parse(saved);
+      // Replace categories with loaded data
+      categories.length = 0;
+      categories.push(...loaded);
+      return true;
+    }
+  } catch(e) {
+    console.error('[Storage] Failed to load categories:', e.message);
+  }
+  return false;
+}
+
+function clearLocalStorageData() {
+  try {
+    localStorage.removeItem('vt-state');
+    localStorage.removeItem('vt-categories');
+  } catch(e) {
+    console.error('[Storage] Failed to clear data:', e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
 function init() {
-  seedDemoData();
+  // Try to load existing data from localStorage
+  const hasRestoredState = loadStateFromLocalStorage();
+  const hasRestoredCategories = loadCategoriesFromLocalStorage();
+
+  // Only seed demo data if this is the first load (no saved data)
+  if (!hasRestoredState) {
+    seedDemoData();
+  }
+
   loadSettingsToForm();
   renderDashboardProducts();
   renderMetrics();
@@ -3017,6 +3102,8 @@ function addCategory() {
   renderDashboardProducts();
   showToast('ok', `Category "${name}" added!`);
   addNotification('ok', `Category added: ${name}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('add category');
 }
 
@@ -3029,6 +3116,8 @@ function deleteCategory(catId) {
   renderDashboardProducts();
   showToast('ok', `Category "${cat.name}" deleted.`);
   addNotification('info', `Category deleted: ${cat.name}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('delete category');
 }
 
@@ -3050,6 +3139,8 @@ function saveEditCategory(catId, value) {
   const cat = categories.find(c=>c.id===catId);
   if(cat){cat.name=n; showToast('ok',`Category renamed to "${n}".`); addNotification('info', `Category renamed to ${n}`);}
   renderCategories();
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('rename category');
 }
 
@@ -3069,6 +3160,8 @@ function addModel(catId) {
   renderDashboardProducts();
   showToast('ok',`Model "${name}" added to ${cat.name}.`);
   addNotification('ok', `Model added: ${cat.name} › ${name}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('add model');
 }
 
@@ -3082,6 +3175,8 @@ function deleteModel(catId, modelId) {
   renderDashboardProducts();
   showToast('ok',`Model "${m.name}" removed.`);
   addNotification('info', `Model removed: ${cat.name} › ${m.name}`);
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('delete model');
 }
 
@@ -3108,6 +3203,8 @@ function saveEditModel(catId, modelId, value) {
   const m = cat && cat.models.find(m=>m.id===modelId);
   if(m){ m.name=n; showToast('ok',`Model renamed to "${n}".`); addNotification('info', `Model renamed to ${cat.name} › ${n}`); }
   renderCategories();
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('rename model');
 }
 
@@ -3140,6 +3237,8 @@ function confirmModelRestock() {
   renderCategories();
   renderDashboardProducts();
   renderMetrics();
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('restock model');
 }
 document.getElementById('mr-qty') && document.getElementById('mr-qty').addEventListener('input', function(){
@@ -3181,6 +3280,8 @@ function confirmModelConfig() {
   renderCategories();
   renderDashboardProducts();
   renderMetrics();
+  saveStateToLocalStorage();
+  saveCategoriesToLocalStorage();
   syncStockToFirebase('model config');
 }
 
