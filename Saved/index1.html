@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -276,7 +276,7 @@ body{
 /* ── METRIC CARDS ── */
 .metrics-row{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:14px;
 }
 .metric-card{
@@ -546,34 +546,6 @@ body{
   align-self:flex-start;
 }
 .btn-save:hover{background:#2563eb}
-
-/* ── SETTINGS DROPDOWN BUTTON ── */
-.settings-dropdown-btn{
-  display:flex;align-items:center;gap:5px;
-  padding:6px 11px;
-  background:var(--bg-elevated);
-  border:1px solid var(--border-md);
-  border-radius:7px;
-  color:var(--text-2);
-  font-size:12px;
-  font-weight:500;
-  cursor:pointer;
-  font-family:var(--font-ui);
-  transition:all .15s;
-  white-space:nowrap;
-}
-.settings-dropdown-btn:hover{background:var(--bg-hover);color:var(--text-1)}
-.settings-dropdown-btn.active{background:var(--accent-glow);color:var(--accent);border-color:rgba(59,130,246,.25)}
-
-/* Make settings-card match notif-card height when collapsed */
-#settings-card-widget{
-  max-height:360px;
-  overflow:hidden;
-  transition:max-height .3s ease;
-}
-#settings-card-widget.expanded{
-  max-height:1000px;
-}
 
 /* ── FIREBASE CONFIG CARD ── */
 .firebase-card{
@@ -1279,7 +1251,6 @@ html.dark .gauge-track{stroke:#1e2a42}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
-#m-offline-card { display: none !important; }
 </style>
 </head>
 <body>
@@ -1358,8 +1329,8 @@ html.dark .gauge-track{stroke:#1e2a42}
         <div class="rtc-date" id="rtc-date">Loading...</div>
       </div>
       <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
-        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
       <button class="btn-icon" onclick="openNotifications()" title="Notifications">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -1389,7 +1360,7 @@ html.dark .gauge-track{stroke:#1e2a42}
         </div>
       </div>
 
-      <div class="metric-card warning-card" id="m-offline-card" style="display:none !important">
+      <div class="metric-card warning-card" id="m-offline-card">
         <div class="metric-top">
           <div>
             <div class="metric-label">Offline Sales</div>
@@ -1415,7 +1386,7 @@ html.dark .gauge-track{stroke:#1e2a42}
         <div class="metric-sub" id="m-units-sub">Hopper 1: 0 · Hopper 2: 0 · Hopper 3: 0</div>
       </div>
 
-      <div class="metric-card" id="m-alert-card" style="display:none">
+      <div class="metric-card" id="m-alert-card">
         <div class="metric-top">
           <div>
             <div class="metric-label">Stock Alerts</div>
@@ -1426,23 +1397,6 @@ html.dark .gauge-track{stroke:#1e2a42}
           </div>
         </div>
         <div class="metric-sub" id="m-alert-sub">All stocks normal</div>
-      </div>
-
-      <div class="metric-card" id="offline-ready-card" style="border-left:3px solid var(--success);position:relative;overflow:hidden">
-        <div style="position:absolute;inset:0;background:var(--success-bg);opacity:1;pointer-events:none"></div>
-        <div class="metric-top" style="position:relative">
-          <div>
-            <div class="metric-label">System Status</div>
-            <div style="font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--success);letter-spacing:-.2px;margin-top:2px">Offline-Ready</div>
-          </div>
-          <div class="metric-icon" style="background:var(--success-bg);color:var(--success);border:1px solid rgba(5,150,105,.2)">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0119 12.55M5 12.55a10.94 10.94 0 015.17-2.39M10.71 5.05A16 16 0 0122.56 9M1.42 9a15.91 15.91 0 014.7-2.88M12 20h.01"/></svg>
-          </div>
-        </div>
-        <div style="position:relative;display:flex;align-items:center;gap:5px;margin-top:2px">
-          <span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0"></span>
-          <span style="font-size:11px;color:var(--text-2)">Local data persists without internet</span>
-        </div>
       </div>
     </div>
 
@@ -1490,81 +1444,55 @@ html.dark .gauge-track{stroke:#1e2a42}
 
     <!-- BOTTOM ROW: Settings + Notifications -->
     <div class="bottom-row">
-      <div class="settings-card" id="settings-card-widget">
+      <div class="settings-card">
         <div class="section-header">
           <div class="section-title">Stock Settings</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <button class="btn-save" id="settings-save-btn" onclick="saveAllSettings()" style="display:none">Save Changes</button>
-            <button class="settings-dropdown-btn" id="settings-toggle-btn" onclick="toggleSettingsDropdown()" title="Toggle settings">
-              <svg id="settings-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="transition:transform .25s ease"><polyline points="6 9 12 15 18 9"/></svg>
-              <span id="settings-toggle-label">Expand</span>
-            </button>
+          <button class="btn-save" onclick="saveAllSettings()">Save Changes</button>
+        </div>
+
+        <div class="setting-divider">Ballpen Hoppers</div>
+
+        <div class="setting-row">
+          <div class="setting-label">Ballpen — Max Capacity (per hopper)</div>
+          <div class="setting-desc">Total pen slots in each hopper</div>
+          <div class="setting-controls">
+            <input class="setting-input" type="number" id="s-bp-max" value="20" min="1">
+            <span class="setting-unit">pcs</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Ballpen — Low Stock Alert (per hopper)</div>
+          <div class="setting-desc">Notify when any hopper falls below this number</div>
+          <div class="setting-controls">
+            <input class="setting-input" type="number" id="s-bp-threshold" value="5" min="1">
+            <span class="setting-unit">pcs</span>
           </div>
         </div>
 
-        <div id="settings-collapsed-preview" style="display:flex;flex-direction:column;gap:6px">
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;min-width:120px">
-              <div style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Max Capacity</div>
-              <div style="font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--text-1)" id="preview-max">20 pcs</div>
-            </div>
-            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;min-width:120px">
-              <div style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Low Alert</div>
-              <div style="font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--warning)" id="preview-threshold">5 pcs</div>
-            </div>
-            <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex:1;min-width:120px">
-              <div style="font-size:10px;color:var(--text-3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Slot Prices</div>
-              <div style="font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--success)" id="preview-prices">₱20.00 × 3</div>
-            </div>
+        <div class="setting-divider">Hardware Price Sync</div>
+
+        <div class="setting-row">
+          <div class="setting-label">Hardware Price Sync — Slot 1 (Ballpen 1)</div>
+          <div class="setting-desc">Price pushed to ESP32 for BTN1</div>
+          <div class="setting-controls">
+            <span class="setting-unit">₱</span>
+            <input class="setting-price" type="number" id="s-hw-1-price" value="5.00" min="0" step="0.25">
           </div>
-          <div style="font-size:11px;color:var(--text-3);padding-left:2px">Click <b>Expand</b> to edit settings</div>
         </div>
-
-        <div id="settings-expanded-body" style="display:none;flex-direction:column;gap:14px">
-          <div class="setting-divider">Ballpen Hoppers</div>
-
-          <div class="setting-row">
-            <div class="setting-label">Ballpen — Max Capacity (per hopper)</div>
-            <div class="setting-desc">Total pen slots in each hopper</div>
-            <div class="setting-controls">
-              <input class="setting-input" type="number" id="s-bp-max" value="20" min="1">
-              <span class="setting-unit">pcs</span>
-            </div>
+        <div class="setting-row">
+          <div class="setting-label">Hardware Price Sync — Slot 2 (Ballpen 2)</div>
+          <div class="setting-desc">Price pushed to ESP32 for BTN2</div>
+          <div class="setting-controls">
+            <span class="setting-unit">₱</span>
+            <input class="setting-price" type="number" id="s-hw-2-price" value="5.00" min="0" step="0.25">
           </div>
-          <div class="setting-row">
-            <div class="setting-label">Ballpen — Low Stock Alert (per hopper)</div>
-            <div class="setting-desc">Notify when any hopper falls below this number</div>
-            <div class="setting-controls">
-              <input class="setting-input" type="number" id="s-bp-threshold" value="5" min="1">
-              <span class="setting-unit">pcs</span>
-            </div>
-          </div>
-
-          <div class="setting-divider">Hardware Price Sync</div>
-
-          <div class="setting-row">
-            <div class="setting-label">Hardware Price Sync — Slot 1 (Ballpen 1)</div>
-            <div class="setting-desc">Price pushed to ESP32 for BTN1</div>
-            <div class="setting-controls">
-              <span class="setting-unit">₱</span>
-              <input class="setting-price" type="number" id="s-hw-1-price" value="20.00" min="0" step="0.25">
-            </div>
-          </div>
-          <div class="setting-row">
-            <div class="setting-label">Hardware Price Sync — Slot 2 (Ballpen 2)</div>
-            <div class="setting-desc">Price pushed to ESP32 for BTN2</div>
-            <div class="setting-controls">
-              <span class="setting-unit">₱</span>
-              <input class="setting-price" type="number" id="s-hw-2-price" value="20.00" min="0" step="0.25">
-            </div>
-          </div>
-          <div class="setting-row">
-            <div class="setting-label">Hardware Price Sync — Slot 3 (Ballpen 3)</div>
-            <div class="setting-desc">Price pushed to ESP32 for BTN3</div>
-            <div class="setting-controls">
-              <span class="setting-unit">₱</span>
-              <input class="setting-price" type="number" id="s-hw-3-price" value="20.00" min="0" step="0.25">
-            </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-label">Hardware Price Sync — Slot 3 (Ballpen 3)</div>
+          <div class="setting-desc">Price pushed to ESP32 for BTN3</div>
+          <div class="setting-controls">
+            <span class="setting-unit">₱</span>
+            <input class="setting-price" type="number" id="s-hw-3-price" value="5.00" min="0" step="0.25">
           </div>
         </div>
       </div>
@@ -1584,10 +1512,7 @@ html.dark .gauge-track{stroke:#1e2a42}
     <div class="firebase-card" id="firebase-card">
       <div class="section-header">
         <div>
-          <div class="section-title" style="display:flex;align-items:center;gap:8px">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            Firebase Connection
-          </div>
+          <div class="section-title">🔥 Firebase Connection</div>
           <div class="section-hint">Links website to your ESP32 vendo machine in real time</div>
         </div>
         <div class="firebase-status-row" style="padding:6px 10px">
@@ -1619,22 +1544,10 @@ html.dark .gauge-track{stroke:#1e2a42}
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
-        <button class="btn-outline btn-sm" style="font-size:11px;gap:6px" onclick="debugViewFirebaseData()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          View Firebase Data
-        </button>
-        <button class="btn-outline btn-sm" style="font-size:11px;gap:6px" onclick="debugPushLocalToFirebase()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Push Local to Firebase
-        </button>
-        <button class="btn-outline btn-sm" style="font-size:11px;gap:6px" onclick="debugPullFromFirebase()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Pull from Firebase
-        </button>
-        <button class="btn-outline btn-sm" style="background:var(--danger-bg);color:var(--danger);font-size:11px;gap:6px" onclick="debugResetFirebaseData()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-          Reset Firebase to Current
-        </button>
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugViewFirebaseData()">📊 View Firebase Data</button>
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugPushLocalToFirebase()">⬆️ Push Local to Firebase</button>
+        <button class="btn-outline btn-sm" style="font-size:11px" onclick="debugPullFromFirebase()">⬇️ Pull from Firebase</button>
+        <button class="btn-outline btn-sm" style="background:var(--danger-bg);color:var(--danger);font-size:11px" onclick="debugResetFirebaseData()">🔄 Reset Firebase to Current</button>
       </div>
 
       <div class="fb-note">
@@ -1869,37 +1782,6 @@ html.dark .gauge-track{stroke:#1e2a42}
   </div>
 </div>
 
-<!-- FIREBASE DATA VIEWER MODAL -->
-<div class="modal-overlay" id="fb-data-modal">
-  <div class="modal" style="max-width:560px;width:100%">
-    <div class="modal-title" style="justify-content:space-between">
-      <span style="display:flex;align-items:center;gap:8px">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        Firebase Live Data
-      </span>
-      <button onclick="closeModal('fb-data-modal')" style="background:none;border:none;cursor:pointer;color:var(--text-3);padding:2px;border-radius:6px;display:flex;align-items:center;justify-content:center" title="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)">Path: /stock/models</span>
-        <button onclick="refreshFbDataModal()" style="background:var(--bg-elevated);border:1px solid var(--border-md);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--text-2);cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:5px;transition:all .15s" onmouseover="this.style.color='var(--text-1)'" onmouseout="this.style.color='var(--text-2)'">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-          Refresh
-        </button>
-      </div>
-      <pre id="fb-data-pre" style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:var(--font-mono);font-size:11.5px;color:var(--text-1);overflow-y:auto;max-height:340px;white-space:pre-wrap;word-break:break-all;line-height:1.6;margin:0">Loading...</pre>
-    </div>
-    <div class="modal-actions" style="margin-top:8px">
-      <button class="btn-modal-cancel" onclick="closeModal('fb-data-modal')">Close</button>
-      <button class="btn-modal-save" onclick="copyFbDataToClipboard()">
-        <span id="fb-copy-label">Copy JSON</span>
-      </button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
@@ -1935,9 +1817,9 @@ const state = {
 };
 
 const hardwareProducts = [
-  { id: 'slot-1', name: 'Ballpen 1', fbKey: 'ballpen1', price: 20.00 },
-  { id: 'slot-2', name: 'Ballpen 2', fbKey: 'ballpen2', price: 20.00 },
-  { id: 'slot-3', name: 'Ballpen 3', fbKey: 'ballpen3', price: 20.00 }
+  { id: 'slot-1', name: 'Ballpen 1', fbKey: 'ballpen1', price: 5.00 },
+  { id: 'slot-2', name: 'Ballpen 2', fbKey: 'ballpen2', price: 5.00 },
+  { id: 'slot-3', name: 'Ballpen 3', fbKey: 'ballpen3', price: 5.00 }
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -2142,7 +2024,6 @@ function renderMetrics() {
   document.getElementById('m-alert-sub').textContent = alerts > 0 ? messages.join(', ') : 'All stocks normal';
   const alertIcon = document.getElementById('m-alert-icon');
   const alertCard = document.getElementById('m-alert-card');
-  alertCard.style.display = 'flex';
   if (alerts > 0) {
     alertIcon.style.background = 'var(--warning-bg)';
     alertIcon.style.color = 'var(--warning)';
@@ -2375,20 +2256,14 @@ function saveAllSettings() {
   } else {
     showToast('warn', 'Settings saved locally. Connect Firebase to sync prices to hardware.');
   }
-  // Update the collapsed preview to reflect new values
-  updateSettingsPreview();
 }
 
 function loadSettingsToForm() {
   document.getElementById('s-bp-max').value = categories[0]?.models[0]?.max || 20;
   document.getElementById('s-bp-threshold').value = categories[0]?.models[0]?.threshold || 5;
-  hardwareProducts[0].price = 20.00;
-  hardwareProducts[1].price = 20.00;
-  hardwareProducts[2].price = 20.00;
-  state.ballpen.price = 20.00;
-  document.getElementById('s-hw-1-price').value = '20.00';
-  document.getElementById('s-hw-2-price').value = '20.00';
-  document.getElementById('s-hw-3-price').value = '20.00';
+  document.getElementById('s-hw-1-price').value = hardwareProducts[0].price.toFixed(2);
+  document.getElementById('s-hw-2-price').value = hardwareProducts[1].price.toFixed(2);
+  document.getElementById('s-hw-3-price').value = hardwareProducts[2].price.toFixed(2);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2487,41 +2362,9 @@ function initCharts() {
   });
 }
 
-function updateCharts() {
-  if (!salesChart || !revenueChart) return;
-  const p = state.ballpen.price;
-  const now = new Date();
-  const dayIdx = (now.getDay() + 6) % 7; // Mon=0 … Sun=6
-
-  // Sales chart — hourly units × price
-  salesChart.data.datasets[0].data = state.salesHourly.h1.map(v => v * p);
-  salesChart.data.datasets[1].data = state.salesHourly.h2.map(v => v * p);
-  salesChart.data.datasets[2].data = state.salesHourly.h3.map(v => v * p);
-  salesChart.update();
-
-  // Revenue chart — weekly bars
-  revenueChart.data.datasets[0].data = state.weeklyRevenue.h1;
-  revenueChart.data.datasets[1].data = state.weeklyRevenue.h2;
-  revenueChart.data.datasets[2].data = state.weeklyRevenue.h3;
-  revenueChart.update();
-}
-
-function updateCharts() {
-  if (!salesChart || !revenueChart) return;
-  const hour = new Date().getHours();
-  // Ensure arrays are 24 long
-  while (state.salesHourly.h1.length < 24) state.salesHourly.h1.push(0);
-  while (state.salesHourly.h2.length < 24) state.salesHourly.h2.push(0);
-  while (state.salesHourly.h3.length < 24) state.salesHourly.h3.push(0);
-  salesChart.data.datasets[0].data = state.salesHourly.h1.map(v => v * state.ballpen.price);
-  salesChart.data.datasets[1].data = state.salesHourly.h2.map(v => v * state.ballpen.price);
-  salesChart.data.datasets[2].data = state.salesHourly.h3.map(v => v * state.ballpen.price);
-  salesChart.update();
-  revenueChart.data.datasets[0].data = state.weeklyRevenue.h1;
-  revenueChart.data.datasets[1].data = state.weeklyRevenue.h2;
-  revenueChart.data.datasets[2].data = state.weeklyRevenue.h3;
-  revenueChart.update();
-}
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
 const pageTitles = {
   dashboard: 'Dashboard',
   inventory: 'Inventory',
@@ -2814,43 +2657,16 @@ function disconnectFirebase() {
 }
 
 // ── DEBUG FUNCTIONS (for diagnosing sync issues) ────────────────
-let _fbDataCache = null;
-
 async function debugViewFirebaseData() {
   if (!fb.connected) { showToast('warn', 'Not connected to Firebase'); return; }
-  document.getElementById('fb-data-pre').textContent = 'Fetching…';
-  document.getElementById('fb-data-modal').classList.add('open');
   try {
     const data = await fb.get('/stock/models');
-    _fbDataCache = data;
     console.log('📊 Firebase Stock Data:', data);
-    document.getElementById('fb-data-pre').textContent = JSON.stringify(data, null, 2);
+    showToast('ok', 'Firebase data logged to console (press F12)');
+    alert('Firebase Data:\n\n' + JSON.stringify(data, null, 2).slice(0, 500) + '...\n\nSee console for full data (F12)');
   } catch(e) {
-    document.getElementById('fb-data-pre').textContent = '⚠ Error: ' + e.message;
     showToast('danger', 'Failed to read Firebase: ' + e.message);
   }
-}
-
-async function refreshFbDataModal() {
-  if (!fb.connected) return;
-  document.getElementById('fb-data-pre').textContent = 'Refreshing…';
-  try {
-    const data = await fb.get('/stock/models');
-    _fbDataCache = data;
-    document.getElementById('fb-data-pre').textContent = JSON.stringify(data, null, 2);
-  } catch(e) {
-    document.getElementById('fb-data-pre').textContent = '⚠ Error: ' + e.message;
-  }
-}
-
-function copyFbDataToClipboard() {
-  const text = document.getElementById('fb-data-pre').textContent;
-  if (!text || text === 'Loading...') return;
-  navigator.clipboard.writeText(text).then(() => {
-    const lbl = document.getElementById('fb-copy-label');
-    lbl.textContent = 'Copied!';
-    setTimeout(() => lbl.textContent = 'Copy JSON', 1800);
-  }).catch(() => showToast('warn', 'Could not copy to clipboard'));
 }
 
 async function debugPullFromFirebase() {
@@ -2997,22 +2813,6 @@ async function checkDispenseSignal() {
     state.ballpen.soldToday += qty;
     updateMonthlySales(hopperIdx, qty);
 
-    // Update hourly and weekly chart data
-    const saleHour = new Date().getHours();
-    while (state.salesHourly.h1.length < 24) state.salesHourly.h1.push(0);
-    while (state.salesHourly.h2.length < 24) state.salesHourly.h2.push(0);
-    while (state.salesHourly.h3.length < 24) state.salesHourly.h3.push(0);
-    if (hopperIdx === 0) state.salesHourly.h1[saleHour] = (state.salesHourly.h1[saleHour] || 0) + qty;
-    if (hopperIdx === 1) state.salesHourly.h2[saleHour] = (state.salesHourly.h2[saleHour] || 0) + qty;
-    if (hopperIdx === 2) state.salesHourly.h3[saleHour] = (state.salesHourly.h3[saleHour] || 0) + qty;
-    const dayIdx = (new Date().getDay() + 6) % 7; // Mon=0
-    while (state.weeklyRevenue.h1.length < 7) state.weeklyRevenue.h1.push(0);
-    while (state.weeklyRevenue.h2.length < 7) state.weeklyRevenue.h2.push(0);
-    while (state.weeklyRevenue.h3.length < 7) state.weeklyRevenue.h3.push(0);
-    if (hopperIdx === 0) state.weeklyRevenue.h1[dayIdx] = (state.weeklyRevenue.h1[dayIdx] || 0) + (price * qty);
-    if (hopperIdx === 1) state.weeklyRevenue.h2[dayIdx] = (state.weeklyRevenue.h2[dayIdx] || 0) + (price * qty);
-    if (hopperIdx === 2) state.weeklyRevenue.h3[dayIdx] = (state.weeklyRevenue.h3[dayIdx] || 0) + (price * qty);
-
     // Track offline sales total
     if (isOfflineSync) {
       state._offlineSalesTotal = Math.max(0, (state._offlineSalesTotal || 0) - qty);
@@ -3029,7 +2829,6 @@ async function checkDispenseSignal() {
     // ── Re-render
     renderDashboardProducts();
     renderMetrics(); renderTransactions(); checkStockAlerts();
-    updateCharts();
     saveStateToLocalStorage();
     saveCategoriesToLocalStorage();
 
@@ -3092,7 +2891,6 @@ async function pullStockFromFirebase() {
           categories[existingIdx] = ballpenData;
           renderDashboardProducts();
           renderMetrics();
-          updateCharts();
           saveStateToLocalStorage();
           saveCategoriesToLocalStorage();
         }
@@ -3602,60 +3400,6 @@ function toggleTheme() {
     document.getElementById('theme-icon-sun').style.display = 'block';
   }
 })();
-
-// ═══════════════════════════════════════════════════════
-// SETTINGS DROPDOWN TOGGLE
-// ═══════════════════════════════════════════════════════
-function toggleSettingsDropdown() {
-  const card     = document.getElementById('settings-card-widget');
-  const body     = document.getElementById('settings-expanded-body');
-  const preview  = document.getElementById('settings-collapsed-preview');
-  const saveBtn  = document.getElementById('settings-save-btn');
-  const btn      = document.getElementById('settings-toggle-btn');
-  const chevron  = document.getElementById('settings-chevron');
-  const label    = document.getElementById('settings-toggle-label');
-
-  const isExpanded = body.style.display === 'flex';
-  if (isExpanded) {
-    // Collapse
-    body.style.display = 'none';
-    preview.style.display = 'flex';
-    saveBtn.style.display = 'none';
-    card.classList.remove('expanded');
-    btn.classList.remove('active');
-    chevron.style.transform = 'rotate(0deg)';
-    label.textContent = 'Expand';
-    // Update preview values
-    updateSettingsPreview();
-  } else {
-    // Expand
-    body.style.display = 'flex';
-    preview.style.display = 'none';
-    saveBtn.style.display = 'inline-block';
-    card.classList.add('expanded');
-    btn.classList.add('active');
-    chevron.style.transform = 'rotate(180deg)';
-    label.textContent = 'Collapse';
-  }
-}
-
-function updateSettingsPreview() {
-  const maxVal  = document.getElementById('s-bp-max')?.value || '20';
-  const thrVal  = document.getElementById('s-bp-threshold')?.value || '5';
-  const p1 = parseFloat(document.getElementById('s-hw-1-price')?.value || 20).toFixed(2);
-  const p2 = parseFloat(document.getElementById('s-hw-2-price')?.value || 20).toFixed(2);
-  const p3 = parseFloat(document.getElementById('s-hw-3-price')?.value || 20).toFixed(2);
-
-  const prevMax = document.getElementById('preview-max');
-  const prevThr = document.getElementById('preview-threshold');
-  const prevPrc = document.getElementById('preview-prices');
-  if (prevMax) prevMax.textContent = maxVal + ' pcs';
-  if (prevThr) prevThr.textContent = thrVal + ' pcs';
-  if (prevPrc) {
-    const same = p1 === p2 && p2 === p3;
-    prevPrc.textContent = same ? '₱' + p1 + ' × 3' : '₱' + p1 + ' / ₱' + p2 + ' / ₱' + p3;
-  }
-}
 
 init();
 
