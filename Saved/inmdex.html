@@ -2102,11 +2102,8 @@ function renderProduct() {
 // RENDER METRICS
 // ═══════════════════════════════════════════════════════
 function renderMetrics() {
-  // Always derive from transactions — the single source of truth synced via Firebase
-  const totalUnits = state.transactions.reduce((sum, t) => sum + (t.qty || 1), 0);
-  const totalRev   = state.transactions.reduce((sum, t) => sum + (t.amount || 0), 0);
-  // Keep state.ballpen.soldToday in sync
-  state.ballpen.soldToday = totalUnits;
+  const totalUnits = state.ballpen.soldToday;
+  const totalRev   = totalUnits * state.ballpen.price;
 
   document.getElementById('m-revenue').textContent = '₱' + totalRev.toFixed(2);
   document.getElementById('m-units').textContent = totalUnits;
@@ -2936,6 +2933,7 @@ function buildStockPayload() {
   const payload = {
     updatedAt: new Date().toISOString(),
     categories: categoriesPayload,
+    soldToday: state.ballpen.soldToday,
     transactions: state.transactions
   };
   console.log('[buildStockPayload] Payload to send to Firebase:', payload);
@@ -3098,7 +3096,10 @@ async function pullStockFromFirebase() {
       }
     }
 
-    // Pull transactions — single source of truth for revenue and units sold
+    // Pull soldToday and transactions so revenue + units cards match
+    if (typeof payload.soldToday === 'number') {
+      state.ballpen.soldToday = payload.soldToday;
+    }
     if (Array.isArray(payload.transactions)) {
       state.transactions = payload.transactions;
     }
