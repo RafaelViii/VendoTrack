@@ -2932,9 +2932,7 @@ function buildStockPayload() {
   });
   const payload = {
     updatedAt: new Date().toISOString(),
-    categories: categoriesPayload,
-    soldToday: state.ballpen.soldToday,
-    transactions: state.transactions
+    categories: categoriesPayload
   };
   console.log('[buildStockPayload] Payload to send to Firebase:', payload);
   return payload;
@@ -3092,25 +3090,14 @@ async function pullStockFromFirebase() {
         const newData = JSON.stringify(ballpenData);
         if (existingData !== newData) {
           categories[existingIdx] = ballpenData;
+          renderDashboardProducts();
+          renderMetrics();
+          updateCharts();
+          saveStateToLocalStorage();
+          saveCategoriesToLocalStorage();
         }
       }
     }
-
-    // Pull soldToday and transactions so revenue + units cards match
-    if (typeof payload.soldToday === 'number') {
-      state.ballpen.soldToday = payload.soldToday;
-    }
-    if (Array.isArray(payload.transactions)) {
-      state.transactions = payload.transactions;
-    }
-
-    renderDashboardProducts();
-    renderMetrics();
-    renderTransactions();
-    checkStockAlerts();
-    updateCharts();
-    saveStateToLocalStorage();
-    saveCategoriesToLocalStorage();
 
     // Also pull offline sale count
     const offlineData = await fb.get('/offline_pending').catch(() => null);
